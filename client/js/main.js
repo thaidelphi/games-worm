@@ -35,6 +35,7 @@ let renderer = null;
 let input    = null;
 // myId: ไอดีของผู้เล่น (Socket ID ของตัวเอง)
 let myId     = null;
+let worldShape = 'rectangle';
 // alive: สถานะว่าผู้เล่นยังมีชีวิตอยู่หรือไม่
 let alive    = false;
 // clientSnakes: Map เก็บข้อมูลงูทั้งหมดที่ได้รับจากเซิร์ฟเวอร์ (ใช้ทำ Interpolation เคลื่อนที่ลื่นไหล)
@@ -97,6 +98,15 @@ function connect(name) {
 
   socket.on('joined', (data) => {
     myId   = data.myId;
+    config.WORLD_WIDTH = data.worldWidth;
+    config.WORLD_HEIGHT = data.worldHeight;
+    worldShape = data.worldShape || 'rectangle';
+
+    if (!renderer) {
+      renderer = new Renderer(canvas, config, worldShape);
+    } else {
+      renderer.worldShape = worldShape;
+    }
     
     clientSnakes.clear();
     for (const s of (data.snakes || [])) {
@@ -112,6 +122,12 @@ function connect(name) {
 
   socket.on('respawned', (data) => {
     myId   = data.myId || myId;
+    config.WORLD_WIDTH = data.worldWidth;
+    config.WORLD_HEIGHT = data.worldHeight;
+    worldShape = data.worldShape || 'rectangle';
+
+    if (renderer) renderer.worldShape = worldShape;
+
     clientSnakes.clear();
     for (const s of (data.snakes || [])) {
       clientSnakes.set(s.id, { ...s, segments: s.segments.map(seg => ({...seg})) });

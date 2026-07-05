@@ -9,7 +9,7 @@ const { v4: uuidv4 } = require('uuid');
 const SysConfig = require('../sys_config');
 
 const {
-  WORLD_WIDTH, WORLD_HEIGHT,
+  WORLD_SHAPE, WORLD_WIDTH, WORLD_HEIGHT,
   FOOD_COUNT_TARGET, FOOD_RADIUS_MIN, FOOD_RADIUS_MAX,
   CORPSE_FOOD_LIFESPAN_SEC,
   ENABLE_SPECIAL_ITEMS, SPECIAL_ITEM_DROP_CHANCE,
@@ -21,8 +21,20 @@ class Food {
     // id: รหัสไอดีของอาหาร เพื่อให้ Server และ Client อ้างอิงชิ้นเดียวกันได้ถูกต้อง
     this.id = uuidv4();
     // x, y: พิกัดตำแหน่งของอาหารบนแผนที่
-    this.x = x !== undefined ? x : Math.random() * WORLD_WIDTH;
-    this.y = y !== undefined ? y : Math.random() * WORLD_HEIGHT;
+    if (x !== undefined && y !== undefined) {
+      this.x = x;
+      this.y = y;
+    } else {
+      if (WORLD_SHAPE === 'circle') {
+        const angle = Math.random() * Math.PI * 2;
+        const r = Math.sqrt(Math.random()) * (WORLD_WIDTH / 2);
+        this.x = (WORLD_WIDTH / 2) + Math.cos(angle) * r;
+        this.y = (WORLD_HEIGHT / 2) + Math.sin(angle) * r;
+      } else {
+        this.x = Math.random() * WORLD_WIDTH;
+        this.y = Math.random() * WORLD_HEIGHT;
+      }
+    }
     // value: มูลค่าคะแนน/มวลสารที่งูจะได้เมื่อกินชิ้นนี้เข้าไป
     this.value = value || Math.floor(10 + Math.random() * 20);
     // radius: ขนาดของอาหารชิ้นนี้ที่แสดงผลบนหน้าจอ
@@ -111,9 +123,28 @@ class FoodManager {
       finalRadius = FOOD_RADIUS_MAX * 2.5; // ก้อนใหญ่กว่าปกติมาก
     }
 
+    let boundedX = fx;
+    let boundedY = fy;
+
+    if (WORLD_SHAPE === 'circle') {
+      const cx = WORLD_WIDTH / 2;
+      const cy = WORLD_HEIGHT / 2;
+      const maxR = (WORLD_WIDTH / 2) - finalRadius;
+      let dx = fx - cx;
+      let dy = fy - cy;
+      let dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist > maxR && dist > 0) {
+        boundedX = cx + (dx / dist) * maxR;
+        boundedY = cy + (dy / dist) * maxR;
+      }
+    } else {
+      boundedX = Math.max(0, Math.min(WORLD_WIDTH, fx));
+      boundedY = Math.max(0, Math.min(WORLD_HEIGHT, fy));
+    }
+
     const food = new Food(
-      Math.max(0, Math.min(WORLD_WIDTH, fx)),
-      Math.max(0, Math.min(WORLD_HEIGHT, fy)),
+      boundedX,
+      boundedY,
       finalValue,
       color,
       finalRadius,

@@ -17,17 +17,14 @@ export class Renderer {
   /**
    * @param {HTMLCanvasElement} canvas
    * @param {HTMLCanvasElement} minimap
+   * @param {string} worldShape
    */
-  constructor(canvas, minimap) {
-    // canvas: HTML5 Canvas Element สำหรับวาดภาพหลัก
+  constructor(canvas, minimap, worldShape = 'rectangle') {
     this.canvas  = canvas;
-    // ctx: 2D Context ของ Canvas หลัก
     this.ctx     = canvas.getContext('2d');
-    
-    // mm: HTML5 Canvas สำหรับแสดงแผนที่ย่อ
     this.mm = minimap;
-    // mmCtx: 2D Context ของ Canvas แผนที่ย่อ
     this.mmCtx   = minimap.getContext('2d');
+    this.worldShape = worldShape;
 
     this.myId    = null;
     // _zoom: ระดับการซูมของมุมกล้องปัจจุบัน
@@ -95,10 +92,9 @@ export class Renderer {
     ctx.scale(this.zoom, this.zoom);
 
     // Background grid
-    this._drawGrid(ctx, W, H);
-
-    // World border
-    this._drawBorder(ctx);
+    const viewW = W / this.zoom;
+    const viewH = H / this.zoom;
+    this._drawGrid(ctx, this.camX - viewW / 2, this.camY - viewH / 2, viewW, viewH);
 
     // Food
     const now = performance.now() / 1000;
@@ -127,32 +123,42 @@ export class Renderer {
   // ======================================================
   // Grid
   // ======================================================
-  _drawGrid(ctx, W, H) {
-    const tx = W / 2 - this.camX * this.zoom;
-    const ty = H / 2 - this.camY * this.zoom;
+  _drawGrid(ctx, x, y, w, h) {
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = '#2d3748';
 
     ctx.save();
-    ctx.strokeStyle = 'rgba(255,255,255,0.04)';
-    ctx.lineWidth = 1;
-
-    const startX = Math.floor((-tx / this.zoom) / GRID_SIZE) * GRID_SIZE;
-    const startY = Math.floor((-ty / this.zoom) / GRID_SIZE) * GRID_SIZE;
-    const cols   = Math.ceil(W / this.zoom / GRID_SIZE) + 2;
-    const rows   = Math.ceil(H / this.zoom / GRID_SIZE) + 2;
-
-    ctx.beginPath();
-    for (let c = 0; c <= cols; c++) {
-      const x = startX + c * GRID_SIZE;
-      ctx.moveTo(x, startY);
-      ctx.lineTo(x, startY + rows * GRID_SIZE);
+    if (this.worldShape === 'circle') {
+      ctx.beginPath();
+      ctx.arc(WORLD_WIDTH / 2, WORLD_HEIGHT / 2, WORLD_WIDTH / 2, 0, Math.PI * 2);
+      ctx.clip();
     }
-    for (let r = 0; r <= rows; r++) {
-      const y = startY + r * GRID_SIZE;
-      ctx.moveTo(startX, y);
-      ctx.lineTo(startX + cols * GRID_SIZE, y);
+
+    const gridSize = 100;
+    const startX = Math.floor(x / gridSize) * gridSize;
+    const startY = Math.floor(y / gridSize) * gridSize;
+    ctx.beginPath();
+    for (let gx = startX; gx < x + w; gx += gridSize) {
+      ctx.moveTo(gx, Math.max(0, y));
+      ctx.lineTo(gx, Math.min(WORLD_HEIGHT, y + h));
+    }
+    for (let gy = startY; gy < y + h; gy += gridSize) {
+      ctx.moveTo(Math.max(0, x), gy);
+      ctx.lineTo(Math.min(WORLD_WIDTH, x + w), gy);
     }
     ctx.stroke();
     ctx.restore();
+
+    // Map boundary (เส้นขอบแผนที่)
+    ctx.lineWidth = 6;
+    ctx.strokeStyle = '#374151';
+    if (this.worldShape === 'circle') {
+      ctx.beginPath();
+      ctx.arc(WORLD_WIDTH / 2, WORLD_HEIGHT / 2, WORLD_WIDTH / 2 - 3, 0, Math.PI * 2);
+      ctx.stroke();
+    } else {
+      ctx.strokeRect(3, 3, WORLD_WIDTH - 6, WORLD_HEIGHT - 6);
+    }
   }
 
   // ======================================================
@@ -172,7 +178,6 @@ export class Renderer {
   // Food — pulsing glow orbs
   // ======================================================
   _drawFood(ctx, food, now) {
-    // Use food id's first char code as phase offset
     const phase = (food.id ? food.id.charCodeAt(0) : 0) * 0.1;
     const pulse = 0.75 + 0.25 * Math.sin(now * 3 + phase);
     const r = food.r * pulse;
@@ -192,11 +197,9 @@ export class Renderer {
     ctx.fill();
     ctx.restore();
 
-    // วาดตัวอักษรระบุประเภทไอเทมพิเศษ
     if (food.t && food.t !== 'normal') {
       let labelText = food.t.toUpperCase();
       if (food.t === 'mass') {
-        // ใช้ค่า config หรือแสดงว่ามันคือก้อนพลังมหาศาล
         labelText = 'MASS';
       }
 
@@ -214,39 +217,26 @@ export class Renderer {
     }
   }
 
-  // ======================================================
-  // Snake — proper Slither.io style rendering
-  // Draw every segment as a filled circle, connect pairs
-  // with a filled rectangle so there are no gaps.
-  // ======================================================
   _drawSnake(ctx, snake, isMe, now) {
     const segs  = snake.segments;
     if (!segs || segs.length < 2) return;
 
     const r     = snake.radius || 9;
     const color = snake.color  || '#7c3aed';
-    const dark  = this._darkenHsl(color, 30);
 
     ctx.save();
-
-    // Glow
     ctx.shadowColor = color;
     ctx.shadowBlur  = isMe ? 18 : (snake.boosting ? 22 : 8);
 
     const totalSegs = segs.length;
-
-    // Use highly optimized native round caps instead of manual polygon math
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
     ctx.strokeStyle = color;
 
-    // ---- Draw body (tail → head) ----
     for (let i = totalSegs - 1; i >= 1; i--) {
       const curr = segs[i];
       const prev = segs[i - 1];
-
-      // Taper factor: body narrows toward tail
-      const t    = i / totalSegs;      // 1 = tail, 0 = head
+      const t    = i / totalSegs;
       const segR = r * (0.45 + 0.55 * (1 - t)); 
 
       ctx.beginPath();
@@ -256,14 +246,12 @@ export class Renderer {
       ctx.stroke();
     }
 
-    // ---- Head circle ----
     const head  = segs[0];
     const headR = r * 1.15;
 
     ctx.beginPath();
     ctx.arc(head.x, head.y, headR, 0, Math.PI * 2);
 
-    // Radial gradient on head for depth
     const hGrad = ctx.createRadialGradient(
       head.x - headR * 0.3, head.y - headR * 0.3, headR * 0.05,
       head.x, head.y, headR
@@ -273,23 +261,15 @@ export class Renderer {
     ctx.fillStyle = hGrad;
     ctx.fill();
 
-    // Outline on head
     ctx.strokeStyle = 'rgba(255,255,255,0.15)';
     ctx.lineWidth   = 1;
     ctx.stroke();
 
-    // ---- Eyes ----
     this._drawEyes(ctx, head, snake.angle || 0, headR);
-
     ctx.restore();
-
-    // ---- Name label (no shadow, drawn after restore for performance) ----
     this._drawLabel(ctx, head, snake, headR, isMe, color);
   }
 
-  // ======================================================
-  // Eyes
-  // ======================================================
   _drawEyes(ctx, head, angle, r) {
     const fwdX   = Math.cos(angle);
     const fwdY   = Math.sin(angle);
@@ -304,14 +284,12 @@ export class Renderer {
       const ex = head.x + fwdX * fwdOff + perpX * eyeOff * side;
       const ey = head.y + fwdY * fwdOff + perpY * eyeOff * side;
 
-      // White sclera
       ctx.beginPath();
       ctx.arc(ex, ey, eyeR, 0, Math.PI * 2);
       ctx.fillStyle = '#ffffff';
       ctx.shadowBlur = 0;
       ctx.fill();
 
-      // Pupil
       ctx.beginPath();
       ctx.arc(
         ex + fwdX * pupilR * 0.5,
@@ -323,13 +301,9 @@ export class Renderer {
     }
   }
 
-  // ======================================================
-  // Name label
-  // ======================================================
   _drawLabel(ctx, head, snake, r, isMe, color) {
     let displayName = snake.name;
     if (snake.m && snake.m > 1 && snake.e > 0) {
-      // มีบัฟแสดงตัวคูณและเวลาที่เหลือ
       displayName = `[x${snake.m} - ${snake.e}s] ${snake.name}`;
     }
 
@@ -338,16 +312,13 @@ export class Renderer {
     ctx.font         = `${isMe ? 700 : 500} ${fontSize}px Outfit, sans-serif`;
     ctx.textAlign    = 'center';
     ctx.textBaseline = 'bottom';
-
-    // Drop shadow for readability
     ctx.shadowColor  = 'rgba(0,0,0,0.9)';
     ctx.shadowBlur   = 5;
     ctx.shadowOffsetX = 1;
     ctx.shadowOffsetY = 1;
     
-    // ถ้ามีบัฟพิเศษ ให้เปลี่ยนสีข้อความเพื่อให้เด่นขึ้น
     if (snake.m && snake.m > 1) {
-      ctx.fillStyle = '#fcd34d'; // สีทอง
+      ctx.fillStyle = '#fcd34d';
     } else {
       ctx.fillStyle = isMe ? '#ffffff' : color;
     }
@@ -356,9 +327,6 @@ export class Renderer {
     ctx.restore();
   }
 
-  // ======================================================
-  // Color helpers
-  // ======================================================
   _darkenHsl(hslStr, amount) {
     return hslStr.replace(/(\d+)%\)$/, (_, l) =>
       `${Math.max(0, parseInt(l) - amount)}%)`
@@ -370,9 +338,6 @@ export class Renderer {
     );
   }
 
-  // ======================================================
-  // Particles
-  // ======================================================
   spawnParticles(x, y, color, count = 10) {
     for (let i = 0; i < count; i++) {
       const angle = Math.random() * Math.PI * 2;
@@ -409,9 +374,6 @@ export class Renderer {
     }
   }
 
-  // ======================================================
-  // Custom cursor
-  // ======================================================
   _drawCursor(ctx) {
     ctx.save();
     ctx.strokeStyle = 'rgba(255,255,255,0.7)';
@@ -428,9 +390,6 @@ export class Renderer {
     ctx.restore();
   }
 
-  // ======================================================
-  // Minimap
-  // ======================================================
   _drawMinimap(snakes, myId) {
     const ctx  = this.mmCtx;
     const W    = this.mm.width;
@@ -439,10 +398,19 @@ export class Renderer {
     const sy   = H / WORLD_HEIGHT;
 
     ctx.clearRect(0, 0, W, H);
-    ctx.fillStyle = 'rgba(0,0,0,0.75)';
-    ctx.fillRect(0, 0, W, H);
 
-    // Draw each snake as a dot
+    ctx.save();
+    if (this.worldShape === 'circle') {
+      ctx.beginPath();
+      ctx.arc(W / 2, H / 2, W / 2, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+      ctx.fill();
+      ctx.clip();
+    } else {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+      ctx.fillRect(0, 0, W, H);
+    }
+
     for (const snake of snakes) {
       if (!snake.segments?.length) continue;
       const head = snake.segments[0];
@@ -463,10 +431,25 @@ export class Renderer {
     const vH = (window.innerHeight / this.zoom) * sy;
     const vx = (this.camX - window.innerWidth  / (2 * this.zoom)) * sx;
     const vy = (this.camY - window.innerHeight / (2 * this.zoom)) * sy;
+    
+    ctx.restore(); // Restore clip
 
     ctx.strokeStyle = 'rgba(255,255,255,0.35)';
     ctx.lineWidth   = 1;
     ctx.shadowBlur  = 0;
     ctx.strokeRect(vx, vy, vW, vH);
+
+    // วาดกรอบมินิแมป
+    if (this.worldShape === 'circle') {
+      ctx.beginPath();
+      ctx.arc(W / 2, H / 2, W / 2 - 1, 0, Math.PI * 2);
+      ctx.strokeStyle = '#555';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    } else {
+      ctx.strokeStyle = '#555';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(0, 0, W, H);
+    }
   }
 }

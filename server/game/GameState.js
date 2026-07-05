@@ -151,14 +151,11 @@ class GameState {
 
           // เช็คว่าเป็นไอเทมพิเศษหรือไม่
           if (food.type === 'x2') {
-            snake.scoreMultiplier = 2;
-            snake.buffEndTime = Date.now() + (ITEM_DURATION_X2 * 1000);
+            snake.buffEndTimes.x2 = Date.now() + (ITEM_DURATION_X2 * 1000);
           } else if (food.type === 'x5') {
-            snake.scoreMultiplier = 5;
-            snake.buffEndTime = Date.now() + (ITEM_DURATION_X5 * 1000);
+            snake.buffEndTimes.x5 = Date.now() + (ITEM_DURATION_X5 * 1000);
           } else if (food.type === 'x10') {
-            snake.scoreMultiplier = 10;
-            snake.buffEndTime = Date.now() + (ITEM_DURATION_X10 * 1000);
+            snake.buffEndTimes.x10 = Date.now() + (ITEM_DURATION_X10 * 1000);
           } else if (food.type === 'zoom') {
             snake.zoomEndTime = Date.now() + (ITEM_DURATION_ZOOM * 1000);
           }
@@ -274,6 +271,7 @@ class GameState {
   getInitState() {
     const allSnakes = new Map([...this.players, ...this.bots.bots]);
     return {
+      worldShape: SysConfig.WORLD_SHAPE,
       worldWidth: WORLD_WIDTH,
       worldHeight: WORLD_HEIGHT,
       snakes: Array.from(allSnakes.values()).map(s => s.toCompact()),

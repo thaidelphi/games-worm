@@ -10,7 +10,7 @@ const { Snake } = require('./Snake');
 const SysConfig = require('../sys_config');
 
 const {
-  WORLD_WIDTH, WORLD_HEIGHT,
+  WORLD_SHAPE, WORLD_WIDTH, WORLD_HEIGHT,
   BOT_NAMES, BOT_COUNT_TARGET
 } = SysConfig;
 
@@ -44,17 +44,29 @@ class Bot extends Snake {
 
     // Wall avoidance
     const wallMargin = 200;
-    let wallFlee = false;
-    if (aheadX < wallMargin || aheadX > WORLD_WIDTH - wallMargin ||
-        aheadY < wallMargin || aheadY > WORLD_HEIGHT - wallMargin) {
-      // Turn towards center
-      const cx = WORLD_WIDTH / 2;
-      const cy = WORLD_HEIGHT / 2;
-      this._targetAngle = Math.atan2(cy - head.y, cx - head.x);
-      wallFlee = true;
+    let nearWall = false;
+    const cx = WORLD_WIDTH / 2;
+    const cy = WORLD_HEIGHT / 2;
+
+    if (WORLD_SHAPE === 'circle') {
+      const maxR = (WORLD_WIDTH / 2) - wallMargin;
+      let dx = aheadX - cx;
+      let dy = aheadY - cy;
+      if (Math.sqrt(dx * dx + dy * dy) > maxR) {
+        nearWall = true;
+      }
+    } else {
+      if (aheadX < wallMargin || aheadX > WORLD_WIDTH - wallMargin ||
+          aheadY < wallMargin || aheadY > WORLD_HEIGHT - wallMargin) {
+        nearWall = true;
+      }
     }
 
-    if (!wallFlee) {
+    if (nearWall) {
+      // Steer toward center
+      this._targetAngle = Math.atan2(cy - head.y, cx - head.x);
+      this.boosting = false;
+    } else {
       // --- Enemy avoidance ---
       let fleeing = false;
       for (const [id, snake] of snakes) {

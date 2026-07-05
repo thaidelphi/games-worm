@@ -13,6 +13,8 @@
 
 const SysConfig = {
   // ==================== WORLD SETTINGS ====================
+  // WORLD_SHAPE: รูปร่างของแผนที่ ('rectangle' หรือ 'circle')
+  WORLD_SHAPE: 'circle',
   // ขนาดความกว้าง-ยาว ของแผนที่
   WORLD_WIDTH: 5000,
   WORLD_HEIGHT: 5000,

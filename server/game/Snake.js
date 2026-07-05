@@ -12,7 +12,7 @@ const SysConfig = require('../sys_config');
 
 // ดึงค่าคงที่จาก sys_config มาใช้แทน
 const {
-  WORLD_WIDTH, WORLD_HEIGHT, SEGMENT_DISTANCE,
+  WORLD_SHAPE, WORLD_WIDTH, WORLD_HEIGHT, SEGMENT_DISTANCE,
   BASE_SPEED, BOOST_SPEED, INITIAL_LENGTH,
   BASE_RADIUS, MAX_RADIUS
 } = SysConfig;
@@ -41,18 +41,30 @@ class Snake {
     // newSegments: ตัวนับว่าต้องเพิ่มความยาวตัวอีกกี่ข้อต่อ (เมื่อกินอาหาร)
     this.newSegments = INITIAL_LENGTH;
 
-    // scoreMultiplier: ตัวคูณคะแนนจากไอเทมพิเศษ
-    this.scoreMultiplier = 1;
-    // buffEndTime: เวลาที่บัฟจะหมดอายุ (Timestamp)
-    this.buffEndTime = 0;
+    // buffEndTimes: เวลาที่บัฟซ้อนทับกัน
+    this.buffEndTimes = {
+      x2: 0,
+      x5: 0,
+      x10: 0
+    };
+    this.buffEndTime = 0; // เก็บเวลาบัฟที่ใช้งานอยู่ (สำหรับ Client)
     
     // zoomEndTime: เวลาที่บัฟซูมจะหมดอายุ (Timestamp)
     this.zoomEndTime = 0;
 
     // Spawn at a random position with some margin
     const margin = 300;
-    const x = margin + Math.random() * (WORLD_WIDTH - margin * 2);
-    const y = margin + Math.random() * (WORLD_HEIGHT - margin * 2);
+    let x = 0, y = 0;
+    if (WORLD_SHAPE === 'circle') {
+      const spawnAngle = Math.random() * Math.PI * 2;
+      const maxSpawnRadius = Math.max(0, (WORLD_WIDTH / 2) - margin);
+      const spawnR = Math.sqrt(Math.random()) * maxSpawnRadius;
+      x = (WORLD_WIDTH / 2) + Math.cos(spawnAngle) * spawnR;
+      y = (WORLD_HEIGHT / 2) + Math.sin(spawnAngle) * spawnR;
+    } else {
+      x = margin + Math.random() * (WORLD_WIDTH - margin * 2);
+      y = margin + Math.random() * (WORLD_HEIGHT - margin * 2);
+    }
 
     // segments: Array เก็บออบเจ็กต์ {x, y} ของข้อต่อแต่ละอัน (Index 0 คือหัว, ตำแหน่งสุดท้ายคือหาง)
     this.segments = [];
@@ -91,14 +103,35 @@ class Snake {
     let nextY = this.segments[0].y + Math.sin(this.angle) * speed;
 
     this.isHittingBorder = false;
-    if (nextX <= this.radius || nextX >= WORLD_WIDTH - this.radius ||
-        nextY <= this.radius || nextY >= WORLD_HEIGHT - this.radius) {
-      this.isHittingBorder = true;
+
+    if (WORLD_SHAPE === 'circle') {
+      const cx = WORLD_WIDTH / 2;
+      const cy = WORLD_HEIGHT / 2;
+      const maxRadius = (WORLD_WIDTH / 2) - this.radius;
+
+      let dx = nextX - cx;
+      let dy = nextY - cy;
+      let dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (dist > maxRadius) {
+        this.isHittingBorder = true;
+        // Clamp to circle border
+        nextX = cx + (dx / dist) * maxRadius;
+        nextY = cy + (dy / dist) * maxRadius;
+      }
+    } else {
+      if (nextX <= this.radius || nextX >= WORLD_WIDTH - this.radius ||
+          nextY <= this.radius || nextY >= WORLD_HEIGHT - this.radius) {
+        this.isHittingBorder = true;
+      }
+      // Clamp to rectangle border
+      nextX = Math.max(this.radius, Math.min(WORLD_WIDTH - this.radius, nextX));
+      nextY = Math.max(this.radius, Math.min(WORLD_HEIGHT - this.radius, nextY));
     }
 
-    // Clamp head inside world
-    this.segments[0].x = Math.max(this.radius, Math.min(WORLD_WIDTH - this.radius, nextX));
-    this.segments[0].y = Math.max(this.radius, Math.min(WORLD_HEIGHT - this.radius, nextY));
+    // Update head
+    this.segments[0].x = nextX;
+    this.segments[0].y = nextY;
 
     // 2. Body follows leader (Inverse Kinematics)
     for (let i = 1; i < this.segments.length; i++) {
@@ -164,10 +197,23 @@ class Snake {
    * อัปเดตและลบบัฟถ้าหมดเวลา
    */
   updateBuffs(now) {
-    if (this.buffEndTime && now > this.buffEndTime) {
-      this.scoreMultiplier = 1;
-      this.buffEndTime = 0;
+    let maxMultiplier = 1;
+    let bestEndTime = 0;
+
+    if (this.buffEndTimes.x10 > now) {
+      maxMultiplier = 10;
+      bestEndTime = this.buffEndTimes.x10;
+    } else if (this.buffEndTimes.x5 > now) {
+      maxMultiplier = 5;
+      bestEndTime = this.buffEndTimes.x5;
+    } else if (this.buffEndTimes.x2 > now) {
+      maxMultiplier = 2;
+      bestEndTime = this.buffEndTimes.x2;
     }
+
+    this.scoreMultiplier = maxMultiplier;
+    this.buffEndTime = bestEndTime;
+
     if (this.zoomEndTime && now > this.zoomEndTime) {
       this.zoomEndTime = 0;
     }
