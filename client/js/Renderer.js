@@ -197,45 +197,27 @@ export class Renderer {
     ctx.shadowColor = color;
     ctx.shadowBlur  = isMe ? 18 : (snake.boosting ? 22 : 8);
 
-    // ---- Draw body (tail → head) ----
-    // We skip drawing the last 1-2 segments to taper the tail
     const totalSegs = segs.length;
 
+    // Use highly optimized native round caps instead of manual polygon math
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.strokeStyle = color;
+
+    // ---- Draw body (tail → head) ----
     for (let i = totalSegs - 1; i >= 1; i--) {
       const curr = segs[i];
       const prev = segs[i - 1];
 
       // Taper factor: body narrows toward tail
       const t    = i / totalSegs;      // 1 = tail, 0 = head
-      const segR = r * (0.45 + 0.55 * (1 - t)); // min 45% at tail
-
-      // Fill the gap between this segment and the previous one
-      // by drawing a rectangle (capsule strip) along the segment vector
-      const dx  = prev.x - curr.x;
-      const dy  = prev.y - curr.y;
-      const len = Math.sqrt(dx * dx + dy * dy) || 1;
-      const nx  = -dy / len;  // normal
-      const ny  =  dx / len;
-
-      const prevR = r * (0.45 + 0.55 * (1 - (i - 1) / totalSegs));
-      const maxR  = Math.max(segR, prevR);
+      const segR = r * (0.45 + 0.55 * (1 - t)); 
 
       ctx.beginPath();
-      ctx.moveTo(curr.x + nx * segR, curr.y + ny * segR);
-      ctx.lineTo(prev.x + nx * prevR, prev.y + ny * prevR);
-      ctx.lineTo(prev.x - nx * prevR, prev.y - ny * prevR);
-      ctx.lineTo(curr.x - nx * segR,  curr.y - ny * segR);
-      ctx.closePath();
-
-      // Gradient from body color to darker along the body
-      ctx.fillStyle = color;
-      ctx.fill();
-
-      // Segment dot (filled circle at each joint)
-      ctx.beginPath();
-      ctx.arc(curr.x, curr.y, segR, 0, Math.PI * 2);
-      ctx.fillStyle = color;
-      ctx.fill();
+      ctx.moveTo(curr.x, curr.y);
+      ctx.lineTo(prev.x, prev.y);
+      ctx.lineWidth = segR * 2;
+      ctx.stroke();
     }
 
     // ---- Head circle ----
