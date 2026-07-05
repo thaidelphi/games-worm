@@ -1,0 +1,4 @@
+node_modules/
+.npm-bootstrap/
+.npm-cache/
+_npm.tgz

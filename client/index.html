@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Slither.io-style multiplayer snake game — grow your snake, dominate the arena!" />
+  <title>Slither Arena — Multiplayer Snake Game</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ===== START SCREEN ===== -->
+  <div id="start-screen" class="overlay active">
+    <div class="overlay-panel glass">
+      <div class="logo-wrapper">
+        <h1 class="logo">
+          <span class="logo-icon">🐍</span>
+          <span class="logo-text">Slither<span class="accent">Arena</span></span>
+        </h1>
+        <p class="tagline">Grow. Dominate. Survive.</p>
+      </div>
+
+      <div class="form-group">
+        <input
+          id="player-name-input"
+          type="text"
+          class="name-input"
+          placeholder="Enter your name…"
+          maxlength="20"
+          autocomplete="off"
+          spellcheck="false"
+        />
+      </div>
+
+      <button id="play-btn" class="btn btn-primary">
+        <span>Play Now</span>
+        <span class="btn-glow"></span>
+      </button>
+
+      <div class="controls-hint">
+        <div class="hint-item"><kbd>Mouse</kbd> Steer</div>
+        <div class="hint-item"><kbd>Click</kbd> Boost</div>
+        <div class="hint-item"><kbd>Scroll</kbd> Zoom</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== DEATH SCREEN ===== -->
+  <div id="death-screen" class="overlay">
+    <div class="overlay-panel glass death-panel">
+      <div class="death-icon">💀</div>
+      <h2 class="death-title">You Died</h2>
+      <p class="death-score">Score: <span id="final-score">0</span></p>
+      <div class="death-rank" id="death-rank"></div>
+      <button id="respawn-btn" class="btn btn-primary">
+        <span>Play Again</span>
+        <span class="btn-glow"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ===== HUD ===== -->
+  <div id="hud" class="hud hidden">
+
+    <!-- Score display -->
+    <div id="score-display" class="hud-score glass-dark">
+      <div class="score-label">Score</div>
+      <div id="hud-score-value" class="score-value">0</div>
+    </div>
+
+    <!-- Leaderboard -->
+    <aside id="leaderboard" class="leaderboard glass-dark">
+      <h3 class="lb-title">🏆 Top Players</h3>
+      <ol id="lb-list" class="lb-list"></ol>
+    </aside>
+
+    <!-- Minimap -->
+    <canvas id="minimap" class="minimap" width="160" height="160"></canvas>
+
+    <!-- Boost indicator -->
+    <div id="boost-bar-container" class="boost-bar-container">
+      <div class="boost-label">BOOST</div>
+      <div class="boost-bar-track">
+        <div id="boost-bar" class="boost-bar"></div>
+      </div>
+    </div>
+
+    <!-- Zoom controls -->
+    <div id="zoom-controls" class="zoom-controls glass-dark">
+      <button id="zoom-out-btn" class="zoom-btn" title="Zoom out">−</button>
+      <span id="zoom-level" class="zoom-level">1×</span>
+      <button id="zoom-in-btn" class="zoom-btn" title="Zoom in">+</button>
+    </div>
+
+  </div>
+
+  <!-- ===== GAME CANVAS ===== -->
+  <canvas id="game-canvas"></canvas>
+
+  <!-- Socket.IO CDN -->
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
