@@ -61,6 +61,8 @@ const SysConfig = {
   ITEM_DURATION_X2: 30,
   ITEM_DURATION_X5: 15,
   ITEM_DURATION_X10: 10,
+  // ระยะเวลาของไอเทมซูมหน้าจอ (วินาที)
+  ITEM_DURATION_ZOOM: 30,
 
   // ==================== CLIENT (UI) SETTINGS ====================
   // อัตราการลดพลังงานเมื่อกดวิ่งเร็ว

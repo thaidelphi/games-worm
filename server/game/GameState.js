@@ -14,7 +14,8 @@ const SysConfig = require('../sys_config');
 
 const { 
   WORLD_WIDTH, WORLD_HEIGHT, TICK_RATE, FOOD_RADIUS_MIN,
-  ITEM_DURATION_X2, ITEM_DURATION_X5, ITEM_DURATION_X10
+  ITEM_DURATION_X2, ITEM_DURATION_X5, ITEM_DURATION_X10,
+  ITEM_DURATION_ZOOM
 } = SysConfig;
 const TICK_MS = 1000 / TICK_RATE;
 
@@ -143,6 +144,8 @@ class GameState {
           } else if (food.type === 'x10') {
             snake.scoreMultiplier = 10;
             snake.buffEndTime = Date.now() + (ITEM_DURATION_X10 * 1000);
+          } else if (food.type === 'zoom') {
+            snake.zoomEndTime = Date.now() + (ITEM_DURATION_ZOOM * 1000);
           }
 
           this.food.consume(id);

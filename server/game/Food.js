@@ -95,9 +95,10 @@ class FoodManager {
     let finalType = itemType;
     if (finalType === 'normal' && ENABLE_SPECIAL_ITEMS && Math.random() < SPECIAL_ITEM_DROP_CHANCE) {
       const rand = Math.random();
-      if (rand < 0.1) finalType = 'x10';      // 10% ของโอกาสออกพิเศษ (หายากสุด)
-      else if (rand < 0.4) finalType = 'x5';  // 30% ของโอกาสออกพิเศษ
-      else finalType = 'x2';                  // 60% ของโอกาสออกพิเศษ
+      if (rand < 0.1) finalType = 'x10';       // 10%
+      else if (rand < 0.3) finalType = 'x5';   // 20%
+      else if (rand < 0.6) finalType = 'x2';   // 30%
+      else finalType = 'zoom';                 // 40%
     }
 
     const food = new Food(

@@ -45,6 +45,9 @@ class Snake {
     this.scoreMultiplier = 1;
     // buffEndTime: เวลาที่บัฟจะหมดอายุ (Timestamp)
     this.buffEndTime = 0;
+    
+    // zoomEndTime: เวลาที่บัฟซูมจะหมดอายุ (Timestamp)
+    this.zoomEndTime = 0;
 
     // Spawn at a random position with some margin
     const margin = 300;
@@ -159,6 +162,9 @@ class Snake {
       this.scoreMultiplier = 1;
       this.buffEndTime = 0;
     }
+    if (this.zoomEndTime && now > this.zoomEndTime) {
+      this.zoomEndTime = 0;
+    }
   }
 
   /**
@@ -190,6 +196,7 @@ class Snake {
       b: this.boosting,
       m: this.scoreMultiplier, // ส่งค่าบัฟตัวคูณให้ Client
       e: this.buffEndTime > Date.now() ? Math.ceil((this.buffEndTime - Date.now()) / 1000) : 0,
+      z: this.zoomEndTime > Date.now() ? Math.ceil((this.zoomEndTime - Date.now()) / 1000) : 0, // ส่งบัฟซูม
       angle: this.angle,
       segments: this.segments,
     };

@@ -64,8 +64,9 @@ const MAX_ZOOM = config.MAX_ZOOM || 2.0;
 // ZOOM_STEP: อัตราการซูมต่อการคลิกหรือเลื่อนลูกกลิ้ง 1 ครั้ง
 const ZOOM_STEP = config.ZOOM_STEP || 0.1;
 
-function setZoom(z) {
-  zoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, z));
+function setZoom(z, overrideMin = false) {
+  const min = overrideMin ? 0.25 : MIN_ZOOM;
+  zoom = Math.max(min, Math.min(MAX_ZOOM, z));
   renderer?.setZoom(zoom);
   zoomLevel.textContent = `${zoom.toFixed(1)}×`;
 }
@@ -134,11 +135,14 @@ function connect(name) {
         let cs = clientSnakes.get(s.id);
         cs.targetSegments = s.segments;
         cs.color = s.color;
-        cs.radius = s.radius;
-        cs.boosting = s.boosting;
+        cs.radius = s.r;
+        cs.boosting = s.b;
         cs.score = s.score;
         cs.angle = s.angle;
         cs.name = s.name;
+        cs.m = s.m;
+        cs.e = s.e;
+        cs.z = s.z;
       }
     }
     
@@ -243,6 +247,16 @@ function startGameLoop() {
           current.y += (target.y - current.y) * 0.3;
         }
       }
+    }
+
+    // Auto zoom-out if zoom buff is active
+    const me = clientSnakes.get(myId);
+    if (me && me.z > 0) {
+      if (zoom > 0.25) {
+        setZoom(zoom - 0.015, true);
+      }
+    } else if (zoom < MIN_ZOOM) {
+      setZoom(zoom + 0.015);
     }
 
     // Render
