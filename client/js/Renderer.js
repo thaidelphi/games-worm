@@ -191,6 +191,21 @@ export class Renderer {
     ctx.fillStyle = grad;
     ctx.fill();
     ctx.restore();
+
+    // วาดตัวอักษรระบุประเภทไอเทมพิเศษ
+    if (food.t && food.t !== 'normal') {
+      ctx.save();
+      ctx.font = `bold ${Math.max(10, r * 0.8)}px Outfit, sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#ffffff';
+      ctx.shadowColor = 'rgba(0,0,0,0.8)';
+      ctx.shadowBlur = 4;
+      ctx.shadowOffsetX = 1;
+      ctx.shadowOffsetY = 1;
+      ctx.fillText(food.t.toUpperCase(), food.x, food.y);
+      ctx.restore();
+    }
   }
 
   // ======================================================
@@ -263,7 +278,7 @@ export class Renderer {
     ctx.restore();
 
     // ---- Name label (no shadow, drawn after restore for performance) ----
-    this._drawLabel(ctx, head, snake.name, headR, isMe, color);
+    this._drawLabel(ctx, head, snake, headR, isMe, color);
   }
 
   // ======================================================
@@ -305,7 +320,13 @@ export class Renderer {
   // ======================================================
   // Name label
   // ======================================================
-  _drawLabel(ctx, head, name, r, isMe, color) {
+  _drawLabel(ctx, head, snake, r, isMe, color) {
+    let displayName = snake.name;
+    if (snake.m && snake.m > 1 && snake.e > 0) {
+      // มีบัฟแสดงตัวคูณและเวลาที่เหลือ
+      displayName = `[x${snake.m} - ${snake.e}s] ${snake.name}`;
+    }
+
     const fontSize = Math.max(11, r * 1.1);
     ctx.save();
     ctx.font         = `${isMe ? 700 : 500} ${fontSize}px Outfit, sans-serif`;
@@ -317,8 +338,15 @@ export class Renderer {
     ctx.shadowBlur   = 5;
     ctx.shadowOffsetX = 1;
     ctx.shadowOffsetY = 1;
-    ctx.fillStyle    = isMe ? '#ffffff' : color;
-    ctx.fillText(name, head.x, head.y - r * 2.0);
+    
+    // ถ้ามีบัฟพิเศษ ให้เปลี่ยนสีข้อความเพื่อให้เด่นขึ้น
+    if (snake.m && snake.m > 1) {
+      ctx.fillStyle = '#fcd34d'; // สีทอง
+    } else {
+      ctx.fillStyle = isMe ? '#ffffff' : color;
+    }
+    
+    ctx.fillText(displayName, head.x, head.y - r * 2.0);
     ctx.restore();
   }
 

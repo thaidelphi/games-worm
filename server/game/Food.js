@@ -11,7 +11,8 @@ const SysConfig = require('../sys_config');
 const {
   WORLD_WIDTH, WORLD_HEIGHT,
   FOOD_COUNT_TARGET, FOOD_RADIUS_MIN, FOOD_RADIUS_MAX,
-  CORPSE_FOOD_LIFESPAN_SEC
+  CORPSE_FOOD_LIFESPAN_SEC,
+  ENABLE_SPECIAL_ITEMS, SPECIAL_ITEM_DROP_CHANCE
 } = SysConfig;
 
 class Food {
@@ -29,8 +30,13 @@ class Food {
     this.color = color || this._randomColor();
     // pulse: ค่า offset (ระยะเยื้อง) สำหรับอนิเมชันให้วงกลมกระพริบในจังหวะที่ไม่พร้อมกัน
     this.pulse = Math.random() * Math.PI * 2; // phase offset for animation
-    // expiresAt: เวลาที่อาหารนี้จะสลายไป (Timestamp) มีค่าเฉพาะอาหารจากซากงู
-    this.expiresAt = isCorpse ? Date.now() + CORPSE_FOOD_LIFESPAN_SEC * 1000 : null;
+    // value: ปริมาณความจุที่จะเพิ่มให้งู
+    this.value = value || Math.floor(10 + Math.random() * 20);
+    // type: ประเภทของอาหาร ('normal', 'x2', 'x5', 'x10')
+    this.type = type;
+
+    // ถ้าเป็นซากงูที่ตาย ให้เริ่มนับเวลาถอยหลัง (expiresAt)
+    this.expiresAt = isCorpse ? Date.now() + (CORPSE_FOOD_LIFESPAN_SEC * 1000) : null;
   }
 
   _randomColor() {
@@ -45,11 +51,12 @@ class Food {
   toJSON() {
     return {
       id: this.id,
-      x: this.x,
-      y: this.y,
-      r: this.radius,
-      c: this.color,
-      v: this.value,
+      x:  Math.round(this.x),
+      y:  Math.round(this.y),
+      r:  Math.round(this.radius),
+      c:  this.color,
+      t:  this.type, // ส่งประเภทไปให้ Client วาดรูป ('normal', 'x2', 'x5', 'x10')
+      v:  this.value,
     };
   }
 }
@@ -74,21 +81,33 @@ class FoodManager {
    * @param {number} y
    * @param {number} value
    * @param {string} [color]
-   * @param {boolean} [isCorpse]
    * @param {number} [customRadius]
+   * @param {boolean} [isCorpse]
+   * @param {string} [itemType]
    */
-  spawnAt(x, y, value = 3, color = null, isCorpse = true, customRadius = null) {
+  spawnAt(x, y, value = 3, color = null, customRadius = null, isCorpse = true, itemType = 'normal') {
     // Add some scatter
     const scatter = 30;
     const fx = x + (Math.random() - 0.5) * scatter;
     const fy = y + (Math.random() - 0.5) * scatter;
+    
+    // สุ่มประเภทไอเทมถ้าระบบเปิดใช้งาน
+    let finalType = itemType;
+    if (finalType === 'normal' && ENABLE_SPECIAL_ITEMS && Math.random() < SPECIAL_ITEM_DROP_CHANCE) {
+      const rand = Math.random();
+      if (rand < 0.1) finalType = 'x10';      // 10% ของโอกาสออกพิเศษ (หายากสุด)
+      else if (rand < 0.4) finalType = 'x5';  // 30% ของโอกาสออกพิเศษ
+      else finalType = 'x2';                  // 60% ของโอกาสออกพิเศษ
+    }
+
     const food = new Food(
       Math.max(0, Math.min(WORLD_WIDTH, fx)),
       Math.max(0, Math.min(WORLD_HEIGHT, fy)),
       value,
       color,
       customRadius || (FOOD_RADIUS_MIN + Math.random() * (FOOD_RADIUS_MAX - FOOD_RADIUS_MIN)),
-      isCorpse
+      isCorpse,
+      finalType
     );
     this.items.set(food.id, food);
     return food;

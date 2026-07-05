@@ -38,8 +38,13 @@ class Snake {
     this.boosting = false;
     // angle: มุมหันหน้าปัจจุบันของงู (ในหน่วยเรเดียน 0 - 2*PI)
     this.angle = Math.random() * Math.PI * 2;
-    // _growPending: คิวการเติบโตสะสม ว่าต้องเพิ่มความยาวอีกกี่ข้อต่อ (รอการอัปเดตในรอบถัดไป)
-    this._growPending = 0;
+    // newSegments: ตัวนับว่าต้องเพิ่มความยาวตัวอีกกี่ข้อต่อ (เมื่อกินอาหาร)
+    this.newSegments = INITIAL_LENGTH;
+
+    // scoreMultiplier: ตัวคูณคะแนนจากไอเทมพิเศษ
+    this.scoreMultiplier = 1;
+    // buffEndTime: เวลาที่บัฟจะหมดอายุ (Timestamp)
+    this.buffEndTime = 0;
 
     // Spawn at a random position with some margin
     const margin = 300;
@@ -136,12 +141,24 @@ class Snake {
 
   /**
    * Grow the snake by n mass (score)
-   * @param {number} n
+   * กินอาหารแล้วเพิ่มคะแนนและความยาว
    */
-  grow(n = 1) {
-    this.score += n;
+  grow(value) {
+    // คำนวณคะแนนที่ได้ โดยคูณกับบัฟปัจจุบัน
+    const finalValue = Math.floor(value * this.scoreMultiplier);
+    this.score += finalValue;
     const targetLength = INITIAL_LENGTH + Math.floor(this.score / 20);
     this._growPending = Math.max(0, targetLength - this.segments.length);
+  }
+
+  /**
+   * อัปเดตและลบบัฟถ้าหมดเวลา
+   */
+  updateBuffs(now) {
+    if (this.buffEndTime && now > this.buffEndTime) {
+      this.scoreMultiplier = 1;
+      this.buffEndTime = 0;
+    }
   }
 
   /**
@@ -169,8 +186,10 @@ class Snake {
       name: this.name,
       score: Math.floor(this.score),
       color: this.color,
-      radius: this.radius,
-      boosting: this.boosting,
+      r: Math.round(this.radius),
+      b: this.boosting,
+      m: this.scoreMultiplier, // ส่งค่าบัฟตัวคูณให้ Client
+      e: this.buffEndTime > Date.now() ? Math.ceil((this.buffEndTime - Date.now()) / 1000) : 0,
       angle: this.angle,
       segments: this.segments,
     };

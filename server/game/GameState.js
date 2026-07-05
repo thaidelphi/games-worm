@@ -12,7 +12,10 @@ const { FoodManager } = require('./Food');
 const { BotManager } = require('./Bot');
 const SysConfig = require('../sys_config');
 
-const { WORLD_WIDTH, WORLD_HEIGHT, TICK_RATE, FOOD_RADIUS_MIN } = SysConfig;
+const { 
+  WORLD_WIDTH, WORLD_HEIGHT, TICK_RATE, FOOD_RADIUS_MIN,
+  ITEM_DURATION_X2, ITEM_DURATION_X5, ITEM_DURATION_X10
+} = SysConfig;
 const TICK_MS = 1000 / TICK_RATE;
 
 class GameState {
@@ -96,6 +99,11 @@ class GameState {
     // Tick bots (they steer + move inside)
     this.bots.tick(allSnakes, foodList);
 
+    const now = Date.now();
+    for (const snake of allSnakes.values()) {
+      if (snake.alive) snake.updateBuffs(now);
+    }
+
     // Food collisions
     this._checkFoodCollisions(allSnakes);
 
@@ -124,6 +132,19 @@ class GameState {
         const eatDist = eatRadius + food.radius;
         if (dist2 < eatDist * eatDist) {
           snake.grow(food.value);
+
+          // เช็คว่าเป็นไอเทมพิเศษหรือไม่
+          if (food.type === 'x2') {
+            snake.scoreMultiplier = 2;
+            snake.buffEndTime = Date.now() + (ITEM_DURATION_X2 * 1000);
+          } else if (food.type === 'x5') {
+            snake.scoreMultiplier = 5;
+            snake.buffEndTime = Date.now() + (ITEM_DURATION_X5 * 1000);
+          } else if (food.type === 'x10') {
+            snake.scoreMultiplier = 10;
+            snake.buffEndTime = Date.now() + (ITEM_DURATION_X10 * 1000);
+          }
+
           this.food.consume(id);
           // Notify the specific player
           if (!snake.isBot) {

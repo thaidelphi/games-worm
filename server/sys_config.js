@@ -51,6 +51,17 @@ const SysConfig = {
     'PlasmaWorm',  'PhantomBoa',
   ],
 
+  // ==================== SPECIAL ITEMS ====================
+  // เปิด/ปิด การดรอปไอเทมพิเศษ
+  ENABLE_SPECIAL_ITEMS: true,
+  // โอกาสดรอปไอเทมพิเศษ (เช่น 0.05 = 5% เวลาสุ่มเกิดอาหาร)
+  SPECIAL_ITEM_DROP_CHANCE: 0.05,
+  
+  // ระยะเวลาของไอเทมคูณคะแนนแต่ละชนิด (วินาที)
+  ITEM_DURATION_X2: 30,
+  ITEM_DURATION_X5: 15,
+  ITEM_DURATION_X10: 10,
+
   // ==================== CLIENT (UI) SETTINGS ====================
   // อัตราการลดพลังงานเมื่อกดวิ่งเร็ว
   BOOST_DRAIN: 0.008,
