@@ -25,8 +25,7 @@ const boostBar     = document.getElementById('boost-bar');
 const zoomInBtn    = document.getElementById('zoom-in-btn');
 const zoomOutBtn   = document.getElementById('zoom-out-btn');
 const zoomLevel    = document.getElementById('zoom-level');
-const glowRange    = document.getElementById('glow-range');
-const glowValue    = document.getElementById('glow-value');
+const glowSelect   = document.getElementById('glow-select');
 
 // ---- State (ตัวแปรสถานะของเกมฝั่ง Client) ----
 // socket: ใช้เก็บการเชื่อมต่อ WebSocket
@@ -363,15 +362,9 @@ function escapeHtml(str) {
 }
 
 // ---- UI Events ----
-if (glowRange && glowValue) {
-  glowRange.addEventListener('input', (e) => {
-    glowValue.textContent = e.target.value;
-  });
-}
-
 playBtn.addEventListener('click', () => {
   const name = nameInput.value.trim() || 'Player';
-  const glowLevel = parseInt(glowRange?.value || '5', 10);
+  const glowLevel = parseInt(glowSelect?.value || '5', 10);
   
   renderer = new Renderer(canvas, minimapEl);
   renderer.glowMultiplier = glowLevel / 5.0; // ส่งระดับ 0.0 - 1.0 ไปให้ Renderer

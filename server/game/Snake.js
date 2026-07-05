@@ -57,7 +57,7 @@ class Snake {
     this.speedEndTime = 0;
 
     // speedInventory: จำนวนไอเทมสปีดที่เก็บได้สะสมไว้สำหรับกดใช้เอง
-    this.speedInventory = 1;
+    this.speedInventory = 0;
 
     // Spawn at a random position with some margin
     const margin = 300;
@@ -279,9 +279,6 @@ class Snake {
   /** Returns a compact object for broadcast */
   toCompact() {
     const sp = this.speedEndTime > Date.now() ? Math.ceil((this.speedEndTime - Date.now()) / 1000) : 0;
-    if (!this.isBot && sp > 0) {
-      console.log(`[debug] toCompact for player: sp=${sp}, speedEndTime=${this.speedEndTime}, Date.now=${Date.now()}`);
-    }
     return {
       id: this.id,
       name: this.name,
@@ -310,14 +307,11 @@ class Snake {
 
   useSpeedItem() {
     if (!this.alive) return false;
-    console.log(`[debug] useSpeedItem called. Inventory before: ${this.speedInventory}, speedEndTime: ${this.speedEndTime}`);
     if (this.speedInventory > 0) {
       this.speedInventory--;
       this.speedEndTime = Math.max(Date.now(), this.speedEndTime) + (SysConfig.ITEM_DURATION_SPEED * 1000);
-      console.log(`[debug] useSpeedItem success. Inventory after: ${this.speedInventory}, speedEndTime: ${this.speedEndTime}`);
       return true;
     }
-    console.log(`[debug] useSpeedItem failed. Inventory was 0.`);
     return false;
   }
 

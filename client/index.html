@@ -36,10 +36,17 @@
       </div>
 
       <div class="form-group glow-setting" style="text-align: left; margin-bottom: 24px;">
-        <label for="glow-range" style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem;">
-          Glow Level / ความฟุ้ง: <span id="glow-value">5</span> (0-5)
+        <label for="glow-select" style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem;">
+          Glow Level / ความฟุ้ง
         </label>
-        <input type="range" id="glow-range" min="0" max="5" value="5" style="width: 100%; cursor: pointer;">
+        <select id="glow-select" style="width: 100%; padding: 10px; border-radius: 8px; border: 1.5px solid var(--border); background: rgba(0,0,0,0.5); color: #fff; cursor: pointer; font-family: inherit; font-size: 0.9rem; outline: none; box-sizing: border-box;">
+          <option value="0">0 - None / ปิดความฟุ้ง</option>
+          <option value="1">1 - Very Low / ต่ำมาก</option>
+          <option value="2">2 - Low / ต่ำ</option>
+          <option value="3">3 - Medium / ปานกลาง</option>
+          <option value="4">4 - High / สูง</option>
+          <option value="5" selected>5 - Maximum / สูงสุด</option>
+        </select>
         <div style="font-size: 0.75rem; opacity: 0.7; margin-top: 6px; text-align: center;">
           Lower value = Better performance
         </div>
