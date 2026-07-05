@@ -1,6 +1,6 @@
-# 🐍 Slither Arena
+# 🐍 TEWAN.WORM
 
-เกม multiplayer แนว Slither.io — งูกินอาหาร โต ชนคู่แข่ง!
+เกม multiplayer แนว TEWAN.WORM — งูกินอาหาร โต ชนคู่แข่ง!
 
 ## วิธีรันเกม
 

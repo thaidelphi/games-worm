@@ -48,8 +48,8 @@ class Food {
     let finalType = type;
     if (!isCorpse && finalType === 'normal' && ENABLE_SPECIAL_ITEMS && Math.random() < SPECIAL_ITEM_DROP_CHANCE) {
       const rand = Math.random();
-      if (rand < 0.1) finalType = 'x10';       // 10%
-      else if (rand < 0.25) finalType = 'x5';  // 15%
+      if (rand < 0.1) finalType = 'x5';       // 10%
+      else if (rand < 0.25) finalType = 'x3';  // 15%
       else if (rand < 0.45) finalType = 'x2';  // 20%
       else if (rand < 0.65) finalType = 'zoom';// 20%
       else finalType = 'mass';                 // 35%
@@ -82,7 +82,7 @@ class Food {
       y:  Math.round(this.y),
       r:  Math.round(this.radius),
       c:  this.color,
-      t:  this.type, // ส่งประเภทไปให้ Client วาดรูป ('normal', 'x2', 'x5', 'x10')
+      t:  this.type, // ส่งประเภทไปให้ Client วาดรูป ('normal', 'x2', 'x3', 'x5')
       v:  this.value,
     };
   }
@@ -122,8 +122,8 @@ class FoodManager {
     let finalType = itemType;
     if (finalType === 'normal' && ENABLE_SPECIAL_ITEMS && Math.random() < SPECIAL_ITEM_DROP_CHANCE) {
       const rand = Math.random();
-      if (rand < 0.1) finalType = 'x10';       // 10%
-      else if (rand < 0.25) finalType = 'x5';  // 15%
+      if (rand < 0.1) finalType = 'x5';       // 10%
+      else if (rand < 0.25) finalType = 'x3';  // 15%
       else if (rand < 0.45) finalType = 'x2';  // 20%
       else if (rand < 0.65) finalType = 'zoom';// 20%
       else finalType = 'mass';                 // 35%

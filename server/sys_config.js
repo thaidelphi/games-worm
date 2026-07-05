@@ -64,8 +64,8 @@ const SysConfig = {
 
   // ระยะเวลาของไอเทมคูณคะแนนแต่ละชนิด (วินาที)
   ITEM_DURATION_X2: 30,
-  ITEM_DURATION_X5: 15,
-  ITEM_DURATION_X10: 10,
+  ITEM_DURATION_X3: 20,
+  ITEM_DURATION_X5: 10,
   // ระยะเวลาของไอเทมซูมหน้าจอ (วินาที)
   ITEM_DURATION_ZOOM: 30,
   // จำนวนคะแนนที่ได้รับจากก้อนพลังพิเศษ

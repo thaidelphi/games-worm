@@ -88,7 +88,7 @@ function getLocalIp() {
 }
 
 server.listen(PORT, '0.0.0.0', () => {
-  console.log(`\n🐍 Slither.io Server is running!\n`);
+  console.log(`\n🐍 TEWAN.WORM Server is running!\n`);
   console.log(`- Local:   http://localhost:${PORT}`);
   console.log(`- Network: http://${getLocalIp()}:${PORT}\n`);
 });

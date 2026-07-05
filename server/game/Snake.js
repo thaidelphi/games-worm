@@ -44,8 +44,8 @@ class Snake {
     // buffEndTimes: เวลาที่บัฟซ้อนทับกัน
     this.buffEndTimes = {
       x2: 0,
-      x5: 0,
-      x10: 0
+      x3: 0,
+      x5: 0
     };
     this.buffEndTime = 0; // เก็บเวลาบัฟที่ใช้งานอยู่ (สำหรับ Client)
     
@@ -201,9 +201,10 @@ class Snake {
    * Grow the snake by n mass (score)
    * กินอาหารแล้วเพิ่มคะแนนและความยาว
    */
-  grow(value) {
-    // คำนวณคะแนนที่ได้ โดยคูณกับบัฟปัจจุบัน
-    const finalValue = Math.floor(value * this.scoreMultiplier);
+  grow(value, isCorpse = false) {
+    // คำนวณคะแนนที่ได้ โดยคูณกับบัฟปัจจุบัน (ถ้าเป็นซากศพ จะไม่คูณเพื่อป้องกันคะแนนเฟ้อทะลุจักรวาล)
+    const multiplier = isCorpse ? 1 : this.scoreMultiplier;
+    const finalValue = Math.floor(value * multiplier);
     this.score += finalValue;
     const targetLength = INITIAL_LENGTH + Math.floor(this.score / 20);
     this._growPending = Math.max(0, targetLength - this.segments.length);
@@ -216,12 +217,12 @@ class Snake {
     let maxMultiplier = 1;
     let bestEndTime = 0;
 
-    if (this.buffEndTimes.x10 > now) {
-      maxMultiplier = 10;
-      bestEndTime = this.buffEndTimes.x10;
-    } else if (this.buffEndTimes.x5 > now) {
+    if (this.buffEndTimes.x5 > now) {
       maxMultiplier = 5;
       bestEndTime = this.buffEndTimes.x5;
+    } else if (this.buffEndTimes.x3 > now) {
+      maxMultiplier = 3;
+      bestEndTime = this.buffEndTimes.x3;
     } else if (this.buffEndTimes.x2 > now) {
       maxMultiplier = 2;
       bestEndTime = this.buffEndTimes.x2;

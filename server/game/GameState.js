@@ -14,7 +14,7 @@ const SysConfig = require('../sys_config');
 
 const { 
   WORLD_WIDTH, WORLD_HEIGHT, TICK_RATE, FOOD_RADIUS_MIN,
-  ITEM_DURATION_X2, ITEM_DURATION_X5, ITEM_DURATION_X10,
+  ITEM_DURATION_X2, ITEM_DURATION_X3, ITEM_DURATION_X5,
   ITEM_DURATION_ZOOM, BORDER_DAMAGE_PERCENT_PER_SEC, INITIAL_LENGTH
 } = SysConfig;
 const TICK_MS = 1000 / TICK_RATE;
@@ -155,15 +155,16 @@ class GameState {
         const dist2 = dx * dx + dy * dy;
         const eatDist = eatRadius + food.radius;
         if (dist2 < eatDist * eatDist) {
-          snake.grow(food.value);
+          const isCorpse = food.expiresAt !== null;
+          snake.grow(food.value, isCorpse);
 
           // เช็คว่าเป็นไอเทมพิเศษหรือไม่
           if (food.type === 'x2') {
             snake.buffEndTimes.x2 = Date.now() + (ITEM_DURATION_X2 * 1000);
+          } else if (food.type === 'x3') {
+            snake.buffEndTimes.x3 = Date.now() + (ITEM_DURATION_X3 * 1000);
           } else if (food.type === 'x5') {
             snake.buffEndTimes.x5 = Date.now() + (ITEM_DURATION_X5 * 1000);
-          } else if (food.type === 'x10') {
-            snake.buffEndTimes.x10 = Date.now() + (ITEM_DURATION_X10 * 1000);
           } else if (food.type === 'zoom') {
             snake.zoomEndTime = Date.now() + (ITEM_DURATION_ZOOM * 1000);
           }
