@@ -106,20 +106,24 @@ class GameState {
         snake.updateBuffs(now);
         
         if (snake.isHittingBorder) {
-          // ลดคะแนนเป็นเปอร์เซ็นต์ต่อวินาที (ขั้นต่ำ 1 คะแนนต่อเฟรม)
-          const percentPerTick = BORDER_DAMAGE_PERCENT_PER_SEC / TICK_RATE;
-          const damage = Math.max(1, snake.score * (percentPerTick / 100));
-          snake.score -= damage;
+          snake.borderHitTicks = (snake.borderHitTicks || 0) + 1;
+          const maxTicks = Math.max(1, (100 / BORDER_DAMAGE_PERCENT_PER_SEC) * TICK_RATE);
           
-          const targetLength = INITIAL_LENGTH + Math.floor(snake.score / 20);
-          while (snake.segments.length > Math.max(targetLength, INITIAL_LENGTH)) {
-            snake.segments.pop();
-          }
-
-          if (snake.score <= 0) {
+          if (snake.borderHitTicks >= maxTicks || snake.score < 0) {
             snake.score = 0;
             this._killSnake(snake, allSnakes, false);
+          } else {
+            // ลดคะแนนแบบ Linear โดยอิงจากคะแนนเริ่มต้นตอนที่ชนขอบ เพื่อให้ตายในเวลาที่กำหนดเป๊ะๆ
+            const damage = (snake.scoreAtBorderHit || 0) / maxTicks;
+            snake.score -= damage;
+            
+            const targetLength = INITIAL_LENGTH + Math.floor(snake.score / 20);
+            while (snake.segments.length > Math.max(targetLength, INITIAL_LENGTH)) {
+              snake.segments.pop();
+            }
           }
+        } else {
+          snake.borderHitTicks = 0;
         }
       }
     }

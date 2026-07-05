@@ -102,7 +102,7 @@ class Snake {
     let nextX = this.segments[0].x + Math.cos(this.angle) * speed;
     let nextY = this.segments[0].y + Math.sin(this.angle) * speed;
 
-    this.isHittingBorder = false;
+    let isHittingNow = false;
 
     if (WORLD_SHAPE === 'circle') {
       const cx = WORLD_WIDTH / 2;
@@ -114,7 +114,7 @@ class Snake {
       let dist = Math.sqrt(dx * dx + dy * dy);
 
       if (dist > maxRadius) {
-        this.isHittingBorder = true;
+        isHittingNow = true;
         // Clamp to circle border
         nextX = cx + (dx / dist) * maxRadius;
         nextY = cy + (dy / dist) * maxRadius;
@@ -122,12 +122,17 @@ class Snake {
     } else {
       if (nextX <= this.radius || nextX >= WORLD_WIDTH - this.radius ||
           nextY <= this.radius || nextY >= WORLD_HEIGHT - this.radius) {
-        this.isHittingBorder = true;
+        isHittingNow = true;
       }
       // Clamp to rectangle border
       nextX = Math.max(this.radius, Math.min(WORLD_WIDTH - this.radius, nextX));
       nextY = Math.max(this.radius, Math.min(WORLD_HEIGHT - this.radius, nextY));
     }
+
+    if (isHittingNow && !this.isHittingBorder) {
+      this.scoreAtBorderHit = this.score;
+    }
+    this.isHittingBorder = isHittingNow;
 
     // Update head
     this.segments[0].x = nextX;
