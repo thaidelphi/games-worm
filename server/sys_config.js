@@ -51,12 +51,19 @@ const SysConfig = {
   BOT_COUNT_TARGET: 8,
   // รายชื่อบอทแบบสุ่ม
   BOT_NAMES: [
-    'ShadowSerpent', 'NeonViper', 'CyberCoil', 'GlitchWorm',
-    'PixelPython', 'VoidCrawler', 'StarSlither', 'NightAdder',
-    'PlasmaWorm', 'PhantomBoa', 'MechaCobra', 'ToxicMamba',
-    'งูดิน', 'น้องหนอน', 'งูเขียวหางบอบช้ำ', 'อสรพิษ',
-    'สเน็คสไลเดอร์', 'เลื้อยสยอง', 'หนอนซิ่ง', 'ไส้เดือนติดปีก',
-    'ตัวตึง', 'เจ้าเวหา', 'งูสายฟ้า', 'หนอนชาเขียว'
+    'ShadowSerpent', 'NeonViper', 'CyberCoil', 'GlitchWorm', 'PixelPython', 'VoidCrawler', 'StarSlither', 'NightAdder',
+    'PlasmaWorm', 'PhantomBoa', 'MechaCobra', 'ToxicMamba', 'AlphaSnake', 'OmegaWorm', 'TurboCrawler', 'VenomStrike',
+    'GoldenPython', 'SilverAdder', 'DarkBoa', 'LightSerpent', 'IceWorm', 'FireCobra', 'WindSlither', 'EarthViper',
+    'GhostWorm', 'NinjaSnake', 'SamuraiWorm', 'PirateSerpent', 'RobotSnake', 'CyborgWorm', 'AlienAnaconda', 'ZombiePython',
+    'DragonWorm', 'DemonSnake', 'AngelSerpent', 'GodOfWorms', 'KingCobra', 'QueenViper', 'PrinceAnaconda', 'PrincessPython',
+    'MasterSnake', 'ProWorm', 'NoobCrawler', 'EpicSlither', 'LegendaryBoa', 'MythicAdder', 'UltraSerpent', 'MegaWorm',
+    'GigaPython', 'TeraCobra',
+    'งูดิน', 'น้องหนอน', 'งูเขียวหางบอบช้ำ', 'อสรพิษ', 'สเน็คสไลเดอร์', 'เลื้อยสยอง', 'หนอนซิ่ง', 'ไส้เดือนติดปีก',
+    'ตัวตึง', 'เจ้าเวหา', 'งูสายฟ้า', 'หนอนชาเขียว', 'งูหลาม', 'งูเหลือม', 'งูเห่า', 'งูจงอาง', 'งูสิง',
+    'งูแมวเซา', 'งูทางมะพร้าว', 'งูปี่แก้ว', 'งูเขียวพระอินทร์', 'งูดินลาย', 'หนอนผีเสื้อ', 'หนอนไหม', 'ไส้เดือนดิน', 'พยาธิตัวตืด',
+    'พยาธิเส้นด้าย', 'มังกรโคโมโด', 'พญานาค', 'มังกรหยก', 'ปลาไหล', 'ม้านิลมังกร', 'สุดสาคร', 'ผีเสื้อสมุทร', 'สินสมุทร',
+    'พระอภัยมณี', 'หนุมาน', 'ทศกัณฐ์', 'พระราม', 'ไมยราพ', 'สุครีพ', 'พาลี', 'สายันต์', 'ลุงตูบ', 'ลุงป้อม',
+    'นักเลงคีย์บอร์ด', 'วัยรุ่นสร้างตัว', 'เด็กแว้น', 'สายหมอบ', 'นอนน้อยแต่นอนนะ', 'หิวข้าว', 'ข้าวมันไก่', 'หมูกรอบ', 'กะเพราไก่ไข่ดาว'
   ],
 
   // ==================== SPECIAL ITEMS ====================
