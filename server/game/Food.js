@@ -61,6 +61,17 @@ class Food {
     if (this.type === 'mass') {
       this.value = SPECIAL_ITEM_MASS_VALUE;
       this.radius = FOOD_RADIUS_MAX * 2.5;
+      this.color = '#a855f7'; // สีม่วง
+    } else if (this.type === 'x2') {
+      this.color = '#eab308'; // สีเหลือง
+    } else if (this.type === 'x3') {
+      this.color = '#f97316'; // สีส้ม
+    } else if (this.type === 'x5') {
+      this.color = '#ef4444'; // สีแดง
+    } else if (this.type === 'zoom') {
+      this.color = '#3b82f6'; // สีน้ำเงิน
+    } else if (this.type === 'speed') {
+      this.color = '#10b981'; // สีเขียว
     }
 
     // ถ้าเป็นซากงูที่ตาย ให้เริ่มนับเวลาถอยหลัง (expiresAt)
@@ -125,9 +136,10 @@ class FoodManager {
       const rand = Math.random();
       if (rand < 0.1) finalType = 'x5';       // 10%
       else if (rand < 0.25) finalType = 'x3';  // 15%
-      else if (rand < 0.45) finalType = 'x2';  // 20%
-      else if (rand < 0.65) finalType = 'zoom';// 20%
-      else finalType = 'mass';                 // 35%
+      else if (rand < 0.40) finalType = 'x2';  // 15%
+      else if (rand < 0.55) finalType = 'zoom';// 15%
+      else if (rand < 0.70) finalType = 'speed';// 15%
+      else finalType = 'mass';                 // 30%
     }
     
     let finalValue = value;
