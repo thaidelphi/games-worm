@@ -17,7 +17,7 @@ const {
 } = SysConfig;
 
 class Food {
-  constructor(x, y, value, color, radius, isCorpse = false) {
+  constructor(x, y, value, color, radius, isCorpse = false, type = 'normal') {
     // id: รหัสไอดีของอาหาร เพื่อให้ Server และ Client อ้างอิงชิ้นเดียวกันได้ถูกต้อง
     this.id = uuidv4();
     // x, y: พิกัดตำแหน่งของอาหารบนแผนที่
