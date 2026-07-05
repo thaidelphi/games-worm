@@ -169,6 +169,7 @@ function connect(name) {
         cs.b5 = s.b5;
         cs.z = s.z;
         cs.sp = s.sp;
+        cs.si = s.si;
       }
     }
     
@@ -314,6 +315,19 @@ function startGameLoop() {
       }
     }
 
+    // Render speed inventory UI
+    const speedInvEl = document.getElementById('speed-inventory');
+    const speedCountEl = document.getElementById('speed-inv-count');
+    if (speedInvEl && speedCountEl && me) {
+      const count = me.si || 0;
+      speedCountEl.textContent = count;
+      if (count > 0) {
+        speedInvEl.classList.remove('empty');
+      } else {
+        speedInvEl.classList.add('empty');
+      }
+    }
+
     // Render
     const snakesArr = Array.from(clientSnakes.values());
     renderer.render(snakesArr, food, myId);
@@ -386,6 +400,18 @@ respawnBtn.addEventListener('click', () => {
 
 nameInput.addEventListener('keydown', (e) => {
   if (e.key === 'Enter') playBtn.click();
+});
+
+window.addEventListener('keydown', (e) => {
+  // อย่าทำงานถ้าผู้เล่นกำลังพิมพ์ชื่ออยู่ในกล่องข้อความ
+  if (document.activeElement === nameInput) return;
+
+  if (e.code === 'Space') {
+    e.preventDefault(); // ป้องกันไม่ให้กด Space แล้วหน้าจอเลื่อนลง
+    if (socket?.connected) {
+      socket.emit('useSpeedItem');
+    }
+  }
 });
 
 // ---- Init ----

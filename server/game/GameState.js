@@ -99,6 +99,13 @@ class GameState {
     return snake;
   }
 
+  usePlayerSpeedItem(socketId) {
+    const snake = this.players.get(socketId);
+    if (snake) {
+      snake.useSpeedItem();
+    }
+  }
+
   // ---- Main Tick ----
 
   _tick() {
@@ -182,7 +189,11 @@ class GameState {
           } else if (food.type === 'zoom') {
             snake.zoomEndTime = Date.now() + (ITEM_DURATION_ZOOM * 1000);
           } else if (food.type === 'speed') {
-            snake.speedEndTime = Date.now() + (SysConfig.ITEM_DURATION_SPEED * 1000);
+            if (snake.isBot) {
+              snake.speedEndTime = Math.max(Date.now(), snake.speedEndTime) + (SysConfig.ITEM_DURATION_SPEED * 1000);
+            } else {
+              snake.speedInventory = (snake.speedInventory || 0) + 1;
+            }
           }
 
           this.food.consume(id);

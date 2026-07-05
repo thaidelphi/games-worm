@@ -56,6 +56,9 @@ class Snake {
     // speedEndTime: เวลาที่บัฟวิ่งเร็วจะหมดอายุ (Timestamp)
     this.speedEndTime = 0;
 
+    // speedInventory: จำนวนไอเทมสปีดที่เก็บได้สะสมไว้สำหรับกดใช้เอง
+    this.speedInventory = 0;
+
     // Spawn at a random position with some margin
     const margin = 300;
     let x = 0, y = 0;
@@ -285,6 +288,7 @@ class Snake {
       b5: this.buffEndTimes.x5 > Date.now() ? Math.ceil((this.buffEndTimes.x5 - Date.now()) / 1000) : 0,
       z: this.zoomEndTime > Date.now() ? Math.ceil((this.zoomEndTime - Date.now()) / 1000) : 0, // ส่งบัฟซูม
       sp: this.speedEndTime > Date.now() ? Math.ceil((this.speedEndTime - Date.now()) / 1000) : 0, // ส่งบัฟวิ่งเร็ว
+      si: this.speedInventory, // ส่งจำนวนไอเทมวิ่งเร็วในตัว
       angle: this.angle,
       segments: this.segments,
     };
@@ -294,6 +298,16 @@ class Snake {
     const hues = [0, 30, 60, 120, 180, 210, 270, 300, 330];
     const h = hues[Math.floor(Math.random() * hues.length)];
     return `hsl(${h}, 100%, 50%)`;
+  }
+
+  useSpeedItem() {
+    if (!this.alive) return false;
+    if (this.speedInventory > 0) {
+      this.speedInventory--;
+      this.speedEndTime = Math.max(Date.now(), this.speedEndTime) + (SysConfig.ITEM_DURATION_SPEED * 1000);
+      return true;
+    }
+    return false;
   }
 
   static getSafeSpawnPosition(allSnakes) {

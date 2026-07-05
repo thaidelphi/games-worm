@@ -432,3 +432,47 @@ kbd {
   0% { transform: scale(0.5); opacity: 0; }
   100% { transform: scale(1); opacity: 1; }
 }
+
+/* Speed Item Inventory */
+.speed-inventory {
+  position: absolute;
+  bottom: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.85rem;
+  background: rgba(17, 24, 39, 0.7);
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.2s ease;
+  z-index: 20;
+}
+.speed-inventory.empty {
+  opacity: 0.4;
+}
+.speed-inv-label {
+  font-weight: 800;
+  color: #10b981;
+}
+.speed-inv-count {
+  font-weight: 800;
+  color: #fff;
+  background: #10b981;
+  padding: 2px 8px;
+  border-radius: 4px;
+  min-width: 14px;
+  text-align: center;
+}
+.speed-inv-hint {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 600;
+}

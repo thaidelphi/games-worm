@@ -60,6 +60,11 @@ io.on('connection', (socket) => {
     }
   });
 
+  // Client activates speed item
+  socket.on('useSpeedItem', () => {
+    game.usePlayerSpeedItem(socket.id);
+  });
+
   // Client requests respawn after death
   socket.on('respawn', () => {
     const snake = game.respawnPlayer(socket.id);
