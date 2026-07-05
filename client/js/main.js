@@ -168,6 +168,7 @@ function connect(name) {
         cs.b3 = s.b3;
         cs.b5 = s.b5;
         cs.z = s.z;
+        cs.sp = s.sp;
       }
     }
     
@@ -306,6 +307,7 @@ function startGameLoop() {
       if (me.b3 > 0) buffsHtml += `<div class="buff-icon"><span class="buff-name" style="color:#f97316">x3 SCORE</span><span class="buff-time">${me.b3}s</span></div>`;
       if (me.b2 > 0) buffsHtml += `<div class="buff-icon"><span class="buff-name" style="color:#eab308">x2 SCORE</span><span class="buff-time">${me.b2}s</span></div>`;
       if (me.z > 0)  buffsHtml += `<div class="buff-icon"><span class="buff-name" style="color:#3b82f6">ZOOM OUT</span><span class="buff-time">${me.z}s</span></div>`;
+      if (me.sp > 0) buffsHtml += `<div class="buff-icon"><span class="buff-name" style="color:#10b981">SPEED x10</span><span class="buff-time">${me.sp}s</span></div>`;
       
       if (activeBuffsEl.innerHTML !== buffsHtml) {
         activeBuffsEl.innerHTML = buffsHtml;

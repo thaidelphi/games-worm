@@ -167,6 +167,8 @@ class GameState {
             snake.buffEndTimes.x5 = Date.now() + (ITEM_DURATION_X5 * 1000);
           } else if (food.type === 'zoom') {
             snake.zoomEndTime = Date.now() + (ITEM_DURATION_ZOOM * 1000);
+          } else if (food.type === 'speed') {
+            snake.speedEndTime = Date.now() + (SysConfig.ITEM_DURATION_SPEED * 1000);
           }
 
           this.food.consume(id);

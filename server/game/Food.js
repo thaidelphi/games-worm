@@ -50,9 +50,10 @@ class Food {
       const rand = Math.random();
       if (rand < 0.1) finalType = 'x5';       // 10%
       else if (rand < 0.25) finalType = 'x3';  // 15%
-      else if (rand < 0.45) finalType = 'x2';  // 20%
-      else if (rand < 0.65) finalType = 'zoom';// 20%
-      else finalType = 'mass';                 // 35%
+      else if (rand < 0.40) finalType = 'x2';  // 15%
+      else if (rand < 0.55) finalType = 'zoom';// 15%
+      else if (rand < 0.70) finalType = 'speed';// 15%
+      else finalType = 'mass';                 // 30%
     }
     this.type = finalType;
 

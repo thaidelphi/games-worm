@@ -52,6 +52,9 @@ class Snake {
     // zoomEndTime: เวลาที่บัฟซูมจะหมดอายุ (Timestamp)
     this.zoomEndTime = 0;
 
+    // speedEndTime: เวลาที่บัฟวิ่งเร็วจะหมดอายุ (Timestamp)
+    this.speedEndTime = 0;
+
     // Spawn at a random position with some margin
     const margin = 300;
     let x = 0, y = 0;
@@ -96,7 +99,12 @@ class Snake {
   move() {
     if (!this.alive) return;
 
-    const speed = this.boosting ? BOOST_SPEED : BASE_SPEED;
+    // BASE_SPEED decreases slightly as the snake grows to simulate weight
+    const baseSpeed = Math.max(3, 8 - (this.segments.length * 0.005));
+    const boostSpeedMultiplier = this.boosting ? 2.5 : 1.0;
+    const itemSpeedMultiplier = this.speedEndTime > Date.now() ? SysConfig.SPEED_EXTRA_MULTIPLIER : 1.0;
+    
+    const speed = baseSpeed * boostSpeedMultiplier * itemSpeedMultiplier;
 
     // 1. Move head
     let nextX = this.segments[0].x + Math.cos(this.angle) * speed;
@@ -269,6 +277,7 @@ class Snake {
       b3: this.buffEndTimes.x3 > Date.now() ? Math.ceil((this.buffEndTimes.x3 - Date.now()) / 1000) : 0,
       b5: this.buffEndTimes.x5 > Date.now() ? Math.ceil((this.buffEndTimes.x5 - Date.now()) / 1000) : 0,
       z: this.zoomEndTime > Date.now() ? Math.ceil((this.zoomEndTime - Date.now()) / 1000) : 0, // ส่งบัฟซูม
+      sp: this.speedEndTime > Date.now() ? Math.ceil((this.speedEndTime - Date.now()) / 1000) : 0, // ส่งบัฟวิ่งเร็ว
       angle: this.angle,
       segments: this.segments,
     };
