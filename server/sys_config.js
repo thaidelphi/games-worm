@@ -53,7 +53,10 @@ const SysConfig = {
   BOT_NAMES: [
     'ShadowSerpent', 'NeonViper', 'CyberCoil', 'GlitchWorm',
     'PixelPython', 'VoidCrawler', 'StarSlither', 'NightAdder',
-    'PlasmaWorm', 'PhantomBoa',
+    'PlasmaWorm', 'PhantomBoa', 'MechaCobra', 'ToxicMamba',
+    'งูดิน', 'น้องหนอน', 'งูเขียวหางบอบช้ำ', 'อสรพิษ',
+    'สเน็คสไลเดอร์', 'เลื้อยสยอง', 'หนอนซิ่ง', 'ไส้เดือนติดปีก',
+    'ตัวตึง', 'เจ้าเวหา', 'งูสายฟ้า', 'หนอนชาเขียว'
   ],
 
   // ==================== SPECIAL ITEMS ====================
