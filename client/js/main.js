@@ -164,6 +164,9 @@ function connect(name) {
         cs.name = s.name;
         cs.m = s.m;
         cs.e = s.e;
+        cs.b2 = s.b2;
+        cs.b3 = s.b3;
+        cs.b5 = s.b5;
         cs.z = s.z;
       }
     }
@@ -294,6 +297,20 @@ function startGameLoop() {
     zoom = Math.max(0.25, Math.min(MAX_ZOOM * 2, zoom));
     renderer?.setZoom(zoom);
     zoomLevel.textContent = `${zoom.toFixed(1)}×`;
+
+    // Render active buffs UI
+    const activeBuffsEl = document.getElementById('active-buffs');
+    if (activeBuffsEl && me) {
+      let buffsHtml = '';
+      if (me.b5 > 0) buffsHtml += `<div class="buff-icon"><span class="buff-name" style="color:#ef4444">x5 SCORE</span><span class="buff-time">${me.b5}s</span></div>`;
+      if (me.b3 > 0) buffsHtml += `<div class="buff-icon"><span class="buff-name" style="color:#f97316">x3 SCORE</span><span class="buff-time">${me.b3}s</span></div>`;
+      if (me.b2 > 0) buffsHtml += `<div class="buff-icon"><span class="buff-name" style="color:#eab308">x2 SCORE</span><span class="buff-time">${me.b2}s</span></div>`;
+      if (me.z > 0)  buffsHtml += `<div class="buff-icon"><span class="buff-name" style="color:#3b82f6">ZOOM OUT</span><span class="buff-time">${me.z}s</span></div>`;
+      
+      if (activeBuffsEl.innerHTML !== buffsHtml) {
+        activeBuffsEl.innerHTML = buffsHtml;
+      }
+    }
 
     // Render
     const snakesArr = Array.from(clientSnakes.values());

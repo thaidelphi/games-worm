@@ -393,3 +393,43 @@ kbd {
   .logo { font-size: 2rem; }
   .leaderboard { width: 160px; }
 }
+
+/* Active Buffs UI */
+.active-buffs {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 12px;
+  pointer-events: none;
+  z-index: 20;
+}
+.buff-icon {
+  background: rgba(17, 24, 39, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  padding: 6px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.buff-name {
+  font-weight: 800;
+  font-size: 14px;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+}
+.buff-time {
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.9);
+}
+@keyframes popIn {
+  0% { transform: scale(0.5); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}

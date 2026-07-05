@@ -264,7 +264,10 @@ class Snake {
       r: Math.round(this.radius),
       b: this.boosting,
       m: this.scoreMultiplier, // ส่งค่าบัฟตัวคูณให้ Client
-      e: this.buffEndTime > Date.now() ? Math.ceil((this.buffEndTime - Date.now()) / 1000) : 0,
+      e: this.currentMultiplierTimeLeft, // เวลารวมของบัฟที่มีค่ามากสุด
+      b2: this.buffEndTimes.x2 > Date.now() ? Math.ceil((this.buffEndTimes.x2 - Date.now()) / 1000) : 0,
+      b3: this.buffEndTimes.x3 > Date.now() ? Math.ceil((this.buffEndTimes.x3 - Date.now()) / 1000) : 0,
+      b5: this.buffEndTimes.x5 > Date.now() ? Math.ceil((this.buffEndTimes.x5 - Date.now()) / 1000) : 0,
       z: this.zoomEndTime > Date.now() ? Math.ceil((this.zoomEndTime - Date.now()) / 1000) : 0, // ส่งบัฟซูม
       angle: this.angle,
       segments: this.segments,
