@@ -182,37 +182,72 @@ export class Renderer {
     const pulse = 0.75 + 0.25 * Math.sin(now * 3 + phase);
     const r = food.r * pulse;
 
-    ctx.save();
-    ctx.shadowColor = food.c;
-    ctx.shadowBlur  = 12;
-
-    const grad = ctx.createRadialGradient(food.x, food.y, 0, food.x, food.y, r + 2);
-    grad.addColorStop(0, '#ffffff');
-    grad.addColorStop(0.4, food.c);
-    grad.addColorStop(1,   'rgba(0,0,0,0)');
-
-    ctx.beginPath();
-    ctx.arc(food.x, food.y, r + 2, 0, Math.PI * 2);
-    ctx.fillStyle = grad;
-    ctx.fill();
-    ctx.restore();
-
     if (food.t && food.t !== 'normal') {
+      // สำหรับไอเทมพิเศษ วาดเป็นกล่องลอยๆ หมุนได้ เพื่อให้เด่นชัด
+      ctx.save();
+      // ลอยขึ้นลงนิดหน่อย
+      const floatY = Math.sin(now * 4 + phase) * 4;
+      ctx.translate(food.x, food.y + floatY);
+      // หมุนกล่อง
+      ctx.rotate(now + phase);
+      
+      const boxSize = r * 1.6;
+      
+      ctx.shadowColor = food.c;
+      ctx.shadowBlur = 15 + 10 * pulse;
+      
+      // วาดกล่องหลัก
+      ctx.fillStyle = food.c;
+      ctx.beginPath();
+      ctx.roundRect ? ctx.roundRect(-boxSize, -boxSize, boxSize * 2, boxSize * 2, 4) : ctx.rect(-boxSize, -boxSize, boxSize * 2, boxSize * 2);
+      ctx.fill();
+      
+      // วาดขอบกล่อง
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+      
+      // ลวดลายตรงกลางกล่อง
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+      ctx.beginPath();
+      ctx.roundRect ? ctx.roundRect(-boxSize * 0.4, -boxSize * 0.4, boxSize * 0.8, boxSize * 0.8, 2) : ctx.rect(-boxSize * 0.4, -boxSize * 0.4, boxSize * 0.8, boxSize * 0.8);
+      ctx.fill();
+      
+      ctx.restore();
+
       let labelText = food.t.toUpperCase();
       if (food.t === 'mass') {
         labelText = 'MASS';
       }
 
       ctx.save();
-      ctx.font = `bold ${Math.max(10, r * 0.8)}px Outfit, sans-serif`;
+      ctx.font = `900 ${Math.max(12, r * 1.1)}px Outfit, sans-serif`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillStyle = '#ffffff';
-      ctx.shadowColor = 'rgba(0,0,0,0.8)';
+      // เงาข้อความแบบแข็งๆ ให้อ่านง่าย
+      ctx.shadowColor = '#000000';
       ctx.shadowBlur = 4;
-      ctx.shadowOffsetX = 1;
-      ctx.shadowOffsetY = 1;
-      ctx.fillText(labelText, food.x, food.y);
+      ctx.shadowOffsetX = 1.5;
+      ctx.shadowOffsetY = 1.5;
+      // ให้ข้อความลอยตามกล่องด้วย
+      ctx.fillText(labelText, food.x, food.y + floatY);
+      ctx.restore();
+    } else {
+      // อาหารปกติ วาดเป็นวงกลมเรืองแสง
+      ctx.save();
+      ctx.shadowColor = food.c;
+      ctx.shadowBlur  = 12;
+
+      const grad = ctx.createRadialGradient(food.x, food.y, 0, food.x, food.y, r + 2);
+      grad.addColorStop(0, '#ffffff');
+      grad.addColorStop(0.4, food.c);
+      grad.addColorStop(1,   'rgba(0,0,0,0)');
+
+      ctx.beginPath();
+      ctx.arc(food.x, food.y, r + 2, 0, Math.PI * 2);
+      ctx.fillStyle = grad;
+      ctx.fill();
       ctx.restore();
     }
   }
