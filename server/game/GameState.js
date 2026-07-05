@@ -101,6 +101,9 @@ class GameState {
     // Snake-vs-snake collisions
     this._checkSnakeCollisions(allSnakes);
 
+    // Clean up expired corpse food
+    this.food.cleanupExpired();
+
     // Broadcast
     this._broadcast(allSnakes);
   }

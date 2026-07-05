@@ -16,8 +16,13 @@ const FOOD_COUNT_TARGET = 600;    // keep this many food items in world
 const FOOD_RADIUS_MIN = 4;
 const FOOD_RADIUS_MAX = 9;
 
+// ตัวแปร CORPSE_FOOD_LIFESPAN_SEC: อายุของอาหารที่ดรอปจากซากงูที่ตาย (วินาที) ก่อนจะสลายไป
+// TH: อาหารที่เกิดจากการตายของงูจะหายไปเมื่อหมดเวลาตามค่านี้
+// EN: Lifespan of food dropped by dead snakes (in seconds). It will vanish after this time.
+const CORPSE_FOOD_LIFESPAN_SEC = 25;
+
 class Food {
-  constructor(x, y, value, color, radius) {
+  constructor(x, y, value, color, radius, isCorpse = false) {
     // id: รหัสไอดีของอาหาร เพื่อให้ Server และ Client อ้างอิงชิ้นเดียวกันได้ถูกต้อง
     this.id = uuidv4();
     // x, y: พิกัดตำแหน่งของอาหารบนแผนที่
@@ -31,6 +36,8 @@ class Food {
     this.color = color || this._randomColor();
     // pulse: ค่า offset (ระยะเยื้อง) สำหรับอนิเมชันให้วงกลมกระพริบในจังหวะที่ไม่พร้อมกัน
     this.pulse = Math.random() * Math.PI * 2; // phase offset for animation
+    // expiresAt: เวลาที่อาหารนี้จะสลายไป (Timestamp) มีค่าเฉพาะอาหารจากซากงู
+    this.expiresAt = isCorpse ? Date.now() + CORPSE_FOOD_LIFESPAN_SEC * 1000 : null;
   }
 
   _randomColor() {
@@ -74,8 +81,9 @@ class FoodManager {
    * @param {number} y
    * @param {number} value
    * @param {string} [color]
+   * @param {boolean} [isCorpse]
    */
-  spawnAt(x, y, value = 3, color = null) {
+  spawnAt(x, y, value = 3, color = null, isCorpse = true) {
     // Add some scatter
     const scatter = 30;
     const fx = x + (Math.random() - 0.5) * scatter;
@@ -85,7 +93,8 @@ class FoodManager {
       Math.max(0, Math.min(WORLD_HEIGHT, fy)),
       value,
       color,
-      FOOD_RADIUS_MIN + Math.random() * (FOOD_RADIUS_MAX - FOOD_RADIUS_MIN)
+      FOOD_RADIUS_MIN + Math.random() * (FOOD_RADIUS_MAX - FOOD_RADIUS_MIN),
+      isCorpse
     );
     this.items.set(food.id, food);
     return food;
@@ -101,6 +110,18 @@ class FoodManager {
     if (this.items.size < FOOD_COUNT_TARGET) {
       const food = new Food();
       this.items.set(food.id, food);
+    }
+  }
+
+  /**
+   * Check and remove food items that have expired
+   */
+  cleanupExpired() {
+    const now = Date.now();
+    for (const [id, food] of this.items) {
+      if (food.expiresAt && now > food.expiresAt) {
+        this.consume(id); // Removing it and optionally refilling if below target
+      }
     }
   }
 
