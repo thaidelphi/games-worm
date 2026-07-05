@@ -67,9 +67,13 @@ const MAX_ZOOM = config.MAX_ZOOM || 2.0;
 // ZOOM_STEP: อัตราการซูมต่อการคลิกหรือเลื่อนลูกกลิ้ง 1 ครั้ง
 const ZOOM_STEP = config.ZOOM_STEP || 0.1;
 
+// userZoomMult: ตัวคูณซูมที่ผู้เล่นปรับเอง
+let userZoomMult = 1.0;
+
 function setZoom(z, overrideMin = false) {
+  // ฟังก์ชันนี้เก็บไว้ใช้ในกรณีอื่น ถ้าจำเป็น
   const min = overrideMin ? 0.25 : MIN_ZOOM;
-  zoom = Math.max(min, Math.min(MAX_ZOOM, z));
+  zoom = Math.max(min, Math.min(MAX_ZOOM * 2, z));
   renderer?.setZoom(zoom);
   zoomLevel.textContent = `${zoom.toFixed(1)}×`;
 }
@@ -267,15 +271,29 @@ function startGameLoop() {
       }
     }
 
-    // Auto zoom-out if zoom buff is active
+    // Dynamic auto-zoom based on snake size
     const me = clientSnakes.get(myId);
-    if (me && me.z > 0) {
-      if (zoom > 0.25) {
-        setZoom(zoom - 0.015, true);
-      }
-    } else if (zoom < MIN_ZOOM) {
-      setZoom(zoom + 0.015);
+    let targetZoom = 2.0; // เริ่มต้นที่ 2x
+    
+    if (me && me.radius) {
+      // 12 คือ BASE_RADIUS, ถ้างูใหญ่ขึ้นรัศมีจะเพิ่มทำให้ซูมลดลง
+      targetZoom = 2.0 * (12 / Math.max(12, me.radius));
     }
+    
+    if (me && me.z > 0) {
+      targetZoom *= 0.5; // ถ้ามีบัฟซูม จะถอยกล้องออกมาอีก
+    }
+    
+    // คูณกับระดับซูมที่ผู้เล่นปรับเอง
+    targetZoom *= userZoomMult;
+    
+    // ค่อยๆ เปลี่ยนระดับซูม (Lerp) เพื่อความนุ่มนวล
+    zoom += (targetZoom - zoom) * 0.05;
+    
+    // จำกัดระดับซูม
+    zoom = Math.max(0.25, Math.min(MAX_ZOOM * 2, zoom));
+    renderer?.setZoom(zoom);
+    zoomLevel.textContent = `${zoom.toFixed(1)}×`;
 
     // Render
     const snakesArr = Array.from(clientSnakes.values());
@@ -326,14 +344,16 @@ playBtn.addEventListener('click', () => {
   renderer.glowMultiplier = glowLevel / 5.0; // ส่งระดับ 0.0 - 1.0 ไปให้ Renderer
   
   input    = new InputHandler();
-  setZoom(1.0);
+  userZoomMult = 1.0;
 
-  // Zoom via scroll
-  input.onZoom((delta) => setZoom(zoom + delta * ZOOM_STEP));
+  // Zoom via scroll (ปรับตัวคูณที่ผู้เล่นต้องการ)
+  input.onZoom((delta) => {
+    userZoomMult = Math.max(0.25, Math.min(3.0, userZoomMult + delta * ZOOM_STEP));
+  });
 
   // Zoom via buttons
-  zoomInBtn .addEventListener('click', () => setZoom(zoom + ZOOM_STEP));
-  zoomOutBtn.addEventListener('click', () => setZoom(zoom - ZOOM_STEP));
+  zoomInBtn .addEventListener('click', () => userZoomMult = Math.min(3.0, userZoomMult + ZOOM_STEP));
+  zoomOutBtn.addEventListener('click', () => userZoomMult = Math.max(0.25, userZoomMult - ZOOM_STEP));
 
   connect(name);
 });
