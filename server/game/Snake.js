@@ -105,6 +105,10 @@ class Snake {
     return this.segments.length;
   }
 
+  get currentMultiplierTimeLeft() {
+    return this.buffEndTime > Date.now() ? Math.ceil((this.buffEndTime - Date.now()) / 1000) : 0;
+  }
+
   /** Move the snake forward based on current angle using Inverse Kinematics */
   move() {
     if (!this.alive) return;
@@ -274,6 +278,10 @@ class Snake {
 
   /** Returns a compact object for broadcast */
   toCompact() {
+    const sp = this.speedEndTime > Date.now() ? Math.ceil((this.speedEndTime - Date.now()) / 1000) : 0;
+    if (!this.isBot && sp > 0) {
+      console.log(`[debug] toCompact for player: sp=${sp}, speedEndTime=${this.speedEndTime}, Date.now=${Date.now()}`);
+    }
     return {
       id: this.id,
       name: this.name,
@@ -287,7 +295,7 @@ class Snake {
       b3: this.buffEndTimes.x3 > Date.now() ? Math.ceil((this.buffEndTimes.x3 - Date.now()) / 1000) : 0,
       b5: this.buffEndTimes.x5 > Date.now() ? Math.ceil((this.buffEndTimes.x5 - Date.now()) / 1000) : 0,
       z: this.zoomEndTime > Date.now() ? Math.ceil((this.zoomEndTime - Date.now()) / 1000) : 0, // ส่งบัฟซูม
-      sp: this.speedEndTime > Date.now() ? Math.ceil((this.speedEndTime - Date.now()) / 1000) : 0, // ส่งบัฟวิ่งเร็ว
+      sp: sp, // ส่งบัฟวิ่งเร็ว
       si: this.speedInventory, // ส่งจำนวนไอเทมวิ่งเร็วในตัว
       angle: this.angle,
       segments: this.segments,
@@ -302,11 +310,14 @@ class Snake {
 
   useSpeedItem() {
     if (!this.alive) return false;
+    console.log(`[debug] useSpeedItem called. Inventory before: ${this.speedInventory}, speedEndTime: ${this.speedEndTime}`);
     if (this.speedInventory > 0) {
       this.speedInventory--;
       this.speedEndTime = Math.max(Date.now(), this.speedEndTime) + (SysConfig.ITEM_DURATION_SPEED * 1000);
+      console.log(`[debug] useSpeedItem success. Inventory after: ${this.speedInventory}, speedEndTime: ${this.speedEndTime}`);
       return true;
     }
+    console.log(`[debug] useSpeedItem failed. Inventory was 0.`);
     return false;
   }
 
