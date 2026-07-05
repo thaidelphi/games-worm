@@ -115,17 +115,25 @@ class Snake {
       let dy = nextY - cy;
       let dist = Math.sqrt(dx * dx + dy * dy);
 
-      if (dist > maxRadius - margin) {
+      if (dist > maxRadius) {
         isHittingNow = true;
-        // Clamp to circle border (อิงจาก maxRadius จริงๆ)
+        // Clamp to circle border
         nextX = cx + (dx / dist) * maxRadius;
         nextY = cy + (dy / dist) * maxRadius;
+      } else if (this.isHittingBorder && dist > maxRadius - margin) {
+        // ให้ margin ถ้างูกำลังชนอยู่ ป้องกันตัวหดแล้วขอบเด้งหนี (แต่ไม่ Clamp เพื่อให้เลี้ยวออกได้)
+        isHittingNow = true;
       }
     } else {
       const margin = this.isHittingBorder ? 20 : 0;
-      if (nextX <= this.radius + margin || nextX >= WORLD_WIDTH - this.radius - margin ||
-          nextY <= this.radius + margin || nextY >= WORLD_HEIGHT - this.radius - margin) {
+      if (nextX <= this.radius || nextX >= WORLD_WIDTH - this.radius ||
+          nextY <= this.radius || nextY >= WORLD_HEIGHT - this.radius) {
         isHittingNow = true;
+      } else if (this.isHittingBorder) {
+        if (nextX <= this.radius + margin || nextX >= WORLD_WIDTH - this.radius - margin ||
+            nextY <= this.radius + margin || nextY >= WORLD_HEIGHT - this.radius - margin) {
+          isHittingNow = true;
+        }
       }
       // Clamp to rectangle border
       nextX = Math.max(this.radius, Math.min(WORLD_WIDTH - this.radius, nextX));
