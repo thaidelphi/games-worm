@@ -43,10 +43,24 @@ class Food {
     this.color = color || this._randomColor();
     // pulse: ค่า offset (ระยะเยื้อง) สำหรับอนิเมชันให้วงกลมกระพริบในจังหวะที่ไม่พร้อมกัน
     this.pulse = Math.random() * Math.PI * 2; // phase offset for animation
-    // value: ปริมาณความจุที่จะเพิ่มให้งู
-    this.value = value || Math.floor(10 + Math.random() * 20);
-    // type: ประเภทของอาหาร ('normal', 'x2', 'x5', 'x10')
-    this.type = type;
+
+    // type: ประเภทของอาหาร
+    let finalType = type;
+    if (!isCorpse && finalType === 'normal' && ENABLE_SPECIAL_ITEMS && Math.random() < SPECIAL_ITEM_DROP_CHANCE) {
+      const rand = Math.random();
+      if (rand < 0.1) finalType = 'x10';       // 10%
+      else if (rand < 0.25) finalType = 'x5';  // 15%
+      else if (rand < 0.45) finalType = 'x2';  // 20%
+      else if (rand < 0.65) finalType = 'zoom';// 20%
+      else finalType = 'mass';                 // 35%
+    }
+    this.type = finalType;
+
+    // ปรับค่าสำหรับไอเทมพิเศษที่เกิดบนแผนที่
+    if (this.type === 'mass') {
+      this.value = SPECIAL_ITEM_MASS_VALUE;
+      this.radius = FOOD_RADIUS_MAX * 2.5;
+    }
 
     // ถ้าเป็นซากงูที่ตาย ให้เริ่มนับเวลาถอยหลัง (expiresAt)
     this.expiresAt = isCorpse ? Date.now() + (CORPSE_FOOD_LIFESPAN_SEC * 1000) : null;
