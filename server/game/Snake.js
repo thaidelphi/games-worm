@@ -87,12 +87,18 @@ class Snake {
     const speed = this.boosting ? BOOST_SPEED : BASE_SPEED;
 
     // 1. Move head
-    this.segments[0].x += Math.cos(this.angle) * speed;
-    this.segments[0].y += Math.sin(this.angle) * speed;
+    let nextX = this.segments[0].x + Math.cos(this.angle) * speed;
+    let nextY = this.segments[0].y + Math.sin(this.angle) * speed;
+
+    this.isHittingBorder = false;
+    if (nextX <= this.radius || nextX >= WORLD_WIDTH - this.radius ||
+        nextY <= this.radius || nextY >= WORLD_HEIGHT - this.radius) {
+      this.isHittingBorder = true;
+    }
 
     // Clamp head inside world
-    this.segments[0].x = Math.max(this.radius, Math.min(WORLD_WIDTH - this.radius, this.segments[0].x));
-    this.segments[0].y = Math.max(this.radius, Math.min(WORLD_HEIGHT - this.radius, this.segments[0].y));
+    this.segments[0].x = Math.max(this.radius, Math.min(WORLD_WIDTH - this.radius, nextX));
+    this.segments[0].y = Math.max(this.radius, Math.min(WORLD_HEIGHT - this.radius, nextY));
 
     // 2. Body follows leader (Inverse Kinematics)
     for (let i = 1; i < this.segments.length; i++) {

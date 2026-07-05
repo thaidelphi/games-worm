@@ -15,7 +15,7 @@ const SysConfig = require('../sys_config');
 const { 
   WORLD_WIDTH, WORLD_HEIGHT, TICK_RATE, FOOD_RADIUS_MIN,
   ITEM_DURATION_X2, ITEM_DURATION_X5, ITEM_DURATION_X10,
-  ITEM_DURATION_ZOOM
+  ITEM_DURATION_ZOOM, BORDER_DAMAGE_PER_TICK, INITIAL_LENGTH
 } = SysConfig;
 const TICK_MS = 1000 / TICK_RATE;
 
@@ -102,7 +102,22 @@ class GameState {
 
     const now = Date.now();
     for (const snake of allSnakes.values()) {
-      if (snake.alive) snake.updateBuffs(now);
+      if (snake.alive) {
+        snake.updateBuffs(now);
+        
+        if (snake.isHittingBorder) {
+          snake.score -= BORDER_DAMAGE_PER_TICK;
+          const targetLength = INITIAL_LENGTH + Math.floor(snake.score / 20);
+          while (snake.segments.length > Math.max(targetLength, INITIAL_LENGTH)) {
+            snake.segments.pop();
+          }
+
+          if (snake.score <= 0) {
+            snake.score = 0;
+            this._killSnake(snake, allSnakes, false);
+          }
+        }
+      }
     }
 
     // Food collisions
@@ -190,25 +205,27 @@ class GameState {
     }
   }
 
-  _killSnake(snake, allSnakes) {
+  _killSnake(snake, allSnakes, dropCorpse = true) {
     if (!snake.alive) return;
     snake.alive = false;
 
     console.log(`[x] Snake "${snake.name}" died (score: ${snake.score})`);
 
-    // Drop food conserving 50% of mass
-    const dropEvery = 3;
-    const numFoods = Math.max(1, Math.floor(snake.segments.length / dropEvery));
-    const totalMassToDrop = snake.score * 0.5;
-    const valuePerFood = Math.max(10, Math.floor(totalMassToDrop / numFoods));
-    // คำนวณรัศมีสูงสุดของซากอาหารอิงตามความอ้วน (radius) ของงูตัวที่ตาย
-    const maxFoodRadius = Math.max(FOOD_RADIUS_MIN, snake.radius * 0.75);
+    if (dropCorpse) {
+      // Drop food conserving 50% of mass
+      const dropEvery = 3;
+      const numFoods = Math.max(1, Math.floor(snake.segments.length / dropEvery));
+      const totalMassToDrop = snake.score * 0.5;
+      const valuePerFood = Math.max(10, Math.floor(totalMassToDrop / numFoods));
+      // คำนวณรัศมีสูงสุดของซากอาหารอิงตามความอ้วน (radius) ของงูตัวที่ตาย
+      const maxFoodRadius = Math.max(FOOD_RADIUS_MIN, snake.radius * 0.75);
 
-    for (let i = 0; i < snake.segments.length; i += dropEvery) {
-      const seg = snake.segments[i];
-      // สุ่มให้มีทั้งเม็ดเล็กเม็ดใหญ่ปนกัน
-      const randomFoodRadius = FOOD_RADIUS_MIN + Math.random() * (maxFoodRadius - FOOD_RADIUS_MIN);
-      this.food.spawnAt(seg.x, seg.y, valuePerFood, snake.color, true, randomFoodRadius);
+      for (let i = 0; i < snake.segments.length; i += dropEvery) {
+        const seg = snake.segments[i];
+        // สุ่มให้มีทั้งเม็ดเล็กเม็ดใหญ่ปนกัน
+        const randomFoodRadius = FOOD_RADIUS_MIN + Math.random() * (maxFoodRadius - FOOD_RADIUS_MIN);
+        this.food.spawnAt(seg.x, seg.y, valuePerFood, snake.color, randomFoodRadius, true);
+      }
     }
 
     // Notify player of death
@@ -229,7 +246,7 @@ class GameState {
     for (let i = 0; i < snake.segments.length; i += 5) {
       const seg = snake.segments[i];
       const randomFoodRadius = FOOD_RADIUS_MIN + Math.random() * (maxFoodRadius - FOOD_RADIUS_MIN);
-      this.food.spawnAt(seg.x, seg.y, valuePerFood, snake.color, true, randomFoodRadius);
+      this.food.spawnAt(seg.x, seg.y, valuePerFood, snake.color, randomFoodRadius, true);
     }
   }
 
