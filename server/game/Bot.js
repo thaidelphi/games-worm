@@ -1,4 +1,7 @@
 // ==================== AI Bot Behavior ====================
+// ไฟล์นี้ควบคุมพฤติกรรมของ AI (Bot) ในเกม 
+// บอทสามารถหลบกำแพง (Wall avoidance), หนีงูตัวอื่นที่ใหญ่กว่า (Enemy avoidance), 
+// ไล่กินอาหารที่อยู่ใกล้ (Chase food), หรือเลื้อยแบบสุ่ม (Wander) ได้
 'use strict';
 
 const { Snake, WORLD_WIDTH, WORLD_HEIGHT } = require('./Snake');

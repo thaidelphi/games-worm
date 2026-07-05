@@ -1,4 +1,7 @@
 // ==================== Main Game Client ====================
+// ไฟล์หลักของฝั่งไคลเอนต์ (Frontend) จัดการเรื่อง UI, การเชื่อมต่อ Socket.IO กับเซิร์ฟเวอร์, 
+// การรับข้อมูล Game State เพื่อนำมาทำ Interpolation (ทำให้การเคลื่อนที่ลื่นไหลไม่กระตุก),
+// และควบคุม Game Loop ฝั่งผู้เล่น (requestAnimationFrame)
 import { Renderer } from './Renderer.js';
 import { InputHandler } from './InputHandler.js';
 

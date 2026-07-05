@@ -1,4 +1,7 @@
 // ==================== Express + Socket.IO Server ====================
+// ไฟล์นี้คือจุดเริ่มต้นของเซิร์ฟเวอร์ (Entry point) 
+// ทำหน้าที่รัน Web Server ด้วย Express และจัดการ WebSocket ด้วย Socket.IO
+// เพื่อรับส่งข้อมูลแบบ Real-time ระหว่างผู้เล่นและ Game State
 'use strict';
 
 const express = require('express');
