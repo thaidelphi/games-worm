@@ -26,6 +26,11 @@ const io = new Server(server, {
 // Serve static client files
 app.use(express.static(path.join(__dirname, '..', 'client')));
 
+// Expose configuration file to the client
+app.get('/sys_config.js', (req, res) => {
+  res.sendFile(path.join(__dirname, 'sys_config.js'));
+});
+
 // Health check
 app.get('/health', (_, res) => res.json({ status: 'ok' }));
 

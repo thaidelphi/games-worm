@@ -6,9 +6,11 @@
 // This includes drawing snakes (using lineCap='round' for smoothness), glowing food,
 // particle effects, background grid, and the minimap.
 
+const config = window.SysConfig || {};
+
 // ตัวแปร WORLD_WIDTH, WORLD_HEIGHT: ขนาดของโลก (ต้องตรงกับฝั่งเซิร์ฟเวอร์)
-const WORLD_WIDTH  = 5000;
-const WORLD_HEIGHT = 5000;
+const WORLD_WIDTH  = config.WORLD_WIDTH || 5000;
+const WORLD_HEIGHT = config.WORLD_HEIGHT || 5000;
 const GRID_SIZE    = 80;
 
 export class Renderer {

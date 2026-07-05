@@ -48,19 +48,21 @@ let zoom     = 1.0;
 // boostEnergy: หลอดพลังงานวิ่งเร็ว (0.0 ถึง 1.0)
 let boostEnergy = 1.0; // 0..1
 
+const config = window.SysConfig || {};
+
 // BOOST_DRAIN: อัตราการลดพลังงานเมื่อกดวิ่งเร็ว
-const BOOST_DRAIN = 0.008;
+const BOOST_DRAIN = config.BOOST_DRAIN || 0.008;
 // BOOST_REGEN: อัตราการฟื้นฟูพลังงานเมื่อไม่ได้วิ่ง
-const BOOST_REGEN = 0.003;
+const BOOST_REGEN = config.BOOST_REGEN || 0.003;
 // rafId: ตัวเก็บ ID ของ requestAnimationFrame ไว้สำหรับยกเลิกลูป
 let rafId    = null;
 
 // ---- Zoom helpers (ตัวแปรควบคุมระบบซูม) ----
 // MIN_ZOOM, MAX_ZOOM: ระยะซูมเข้า/ออก สูงสุดและต่ำสุด
-const MIN_ZOOM = 0.5;
-const MAX_ZOOM = 2.0;
+const MIN_ZOOM = config.MIN_ZOOM || 0.5;
+const MAX_ZOOM = config.MAX_ZOOM || 2.0;
 // ZOOM_STEP: อัตราการซูมต่อการคลิกหรือเลื่อนลูกกลิ้ง 1 ครั้ง
-const ZOOM_STEP = 0.1;
+const ZOOM_STEP = config.ZOOM_STEP || 0.1;
 
 function setZoom(z) {
   zoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, z));

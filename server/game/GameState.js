@@ -7,11 +7,12 @@
 // and broadcasts the latest game state to all players.
 'use strict';
 
-const { Snake, WORLD_WIDTH, WORLD_HEIGHT, SEGMENT_DISTANCE } = require('./Snake');
+const { Snake } = require('./Snake');
 const { FoodManager } = require('./Food');
 const { BotManager } = require('./Bot');
+const SysConfig = require('../sys_config');
 
-const TICK_RATE = 20; // ticks per second
+const { WORLD_WIDTH, WORLD_HEIGHT, TICK_RATE } = SysConfig;
 const TICK_MS = 1000 / TICK_RATE;
 
 class GameState {
@@ -29,7 +30,7 @@ class GameState {
     this.bots = new BotManager();
     
     // tickRate: จำนวนรอบการอัปเดตเซิร์ฟเวอร์ต่อวินาที (TPS)
-    this.tickRate = 20; 
+    this.tickRate = TICK_RATE; 
     
     // tickInterval: ตัวจับเวลา (Timer) สำหรับรัน Game Loop ตามอัตรา tickRate
     this._tickInterval = null;

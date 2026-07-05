@@ -8,21 +8,14 @@
 'use strict';
 
 const { v4: uuidv4 } = require('uuid');
+const SysConfig = require('../sys_config');
 
-const WORLD_WIDTH = 5000;
-const WORLD_HEIGHT = 5000;
-const SEGMENT_DISTANCE = 12;       // distance between segments (increased to look better)
-// ==========================================
-// ตัวแปร BASE_SPEED: ความเร็วปกติของงูตอนเลื้อย (พิกเซลต่อ Tick)
-const BASE_SPEED = 6.0;
-
-// ตัวแปร BOOST_SPEED: ความเร็วตอนกดเร่ง (พิกเซลต่อ Tick)
-// มีผลคือถ้ายิ่งมาก งูจะพุ่งเร็วมาก แต่มุมเลี้ยวจะตอบสนองยากขึ้น
-const BOOST_SPEED = 12.0;
-// ==========================================
-const BASE_RADIUS = 12;
-const MAX_RADIUS = 35;
-const INITIAL_LENGTH = 15;
+// ดึงค่าคงที่จาก sys_config มาใช้แทน
+const {
+  WORLD_WIDTH, WORLD_HEIGHT, SEGMENT_DISTANCE,
+  BASE_SPEED, BOOST_SPEED, INITIAL_LENGTH,
+  BASE_RADIUS, MAX_RADIUS
+} = SysConfig;
 
 class Snake {
   /**

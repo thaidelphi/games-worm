@@ -6,18 +6,13 @@
 // Bots can avoid walls, flee from larger snakes, chase nearby food, or wander randomly.
 'use strict';
 
-const { Snake, WORLD_WIDTH, WORLD_HEIGHT } = require('./Snake');
+const { Snake } = require('./Snake');
+const SysConfig = require('../sys_config');
 
-// ตัวแปร BOT_NAMES: ใช้เก็บรายชื่อที่บอทจะสุ่มไปใช้แสดงผลตอนเกิด
-const BOT_NAMES = [
-  'ShadowSerpent', 'NeonViper', 'CyberCoil', 'GlitchWorm',
-  'PixelPython', 'VoidCrawler', 'StarSlither', 'NightAdder',
-  'PlasmaWorm',  'PhantomBoa',
-];
-
-// ตัวแปร BOT_COUNT_TARGET: จำนวนบอทเป้าหมายที่จะรักษาไว้ในเซิร์ฟเวอร์เสมอ
-// ผลคือถ้าน้อยกว่าค่านี้ ระบบจะสุ่มเกิดบอทใหม่มาเติมให้เต็ม
-const BOT_COUNT_TARGET = 8; // keep this many bots alive
+const {
+  WORLD_WIDTH, WORLD_HEIGHT,
+  BOT_NAMES, BOT_COUNT_TARGET
+} = SysConfig;
 
 class Bot extends Snake {
   constructor(name) {

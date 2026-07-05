@@ -6,20 +6,13 @@
 'use strict';
 
 const { v4: uuidv4 } = require('uuid');
-const { WORLD_WIDTH, WORLD_HEIGHT } = require('./Snake');
+const SysConfig = require('../sys_config');
 
-// ตัวแปร FOOD_COUNT_TARGET: จำนวนอาหารเป้าหมายที่จะมีในฉากเสมอ
-// ผลคือถ้าน้อยกว่าค่านี้ อาหารใหม่จะถูกสร้างขึ้นมาเติมจนเต็มแผนที่อัตโนมัติ
-const FOOD_COUNT_TARGET = 600;    // keep this many food items in world
-
-// ตัวแปร FOOD_RADIUS_MIN, FOOD_RADIUS_MAX: ขนาดรัศมีเล็กสุด-ใหญ่สุดของอาหาร (แบบสุ่ม)
-const FOOD_RADIUS_MIN = 4;
-const FOOD_RADIUS_MAX = 9;
-
-// ตัวแปร CORPSE_FOOD_LIFESPAN_SEC: อายุของอาหารที่ดรอปจากซากงูที่ตาย (วินาที) ก่อนจะสลายไป
-// TH: อาหารที่เกิดจากการตายของงูจะหายไปเมื่อหมดเวลาตามค่านี้
-// EN: Lifespan of food dropped by dead snakes (in seconds). It will vanish after this time.
-const CORPSE_FOOD_LIFESPAN_SEC = 25;
+const {
+  WORLD_WIDTH, WORLD_HEIGHT,
+  FOOD_COUNT_TARGET, FOOD_RADIUS_MIN, FOOD_RADIUS_MAX,
+  CORPSE_FOOD_LIFESPAN_SEC
+} = SysConfig;
 
 class Food {
   constructor(x, y, value, color, radius, isCorpse = false) {
