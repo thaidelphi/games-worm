@@ -108,20 +108,23 @@ class Snake {
       const cx = WORLD_WIDTH / 2;
       const cy = WORLD_HEIGHT / 2;
       const maxRadius = (WORLD_WIDTH / 2) - this.radius;
+      // ให้ margin 20 พิกเซลถ้างูกำลังชนขอบอยู่ เพื่อป้องกันกรณีตัวหดเร็วเกินไปจนขอบเด้งหนี
+      const margin = this.isHittingBorder ? 20 : 0;
 
       let dx = nextX - cx;
       let dy = nextY - cy;
       let dist = Math.sqrt(dx * dx + dy * dy);
 
-      if (dist > maxRadius) {
+      if (dist > maxRadius - margin) {
         isHittingNow = true;
-        // Clamp to circle border
+        // Clamp to circle border (อิงจาก maxRadius จริงๆ)
         nextX = cx + (dx / dist) * maxRadius;
         nextY = cy + (dy / dist) * maxRadius;
       }
     } else {
-      if (nextX <= this.radius || nextX >= WORLD_WIDTH - this.radius ||
-          nextY <= this.radius || nextY >= WORLD_HEIGHT - this.radius) {
+      const margin = this.isHittingBorder ? 20 : 0;
+      if (nextX <= this.radius + margin || nextX >= WORLD_WIDTH - this.radius - margin ||
+          nextY <= this.radius + margin || nextY >= WORLD_HEIGHT - this.radius - margin) {
         isHittingNow = true;
       }
       // Clamp to rectangle border
