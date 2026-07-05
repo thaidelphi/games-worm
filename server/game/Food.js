@@ -75,8 +75,9 @@ class FoodManager {
    * @param {number} value
    * @param {string} [color]
    * @param {boolean} [isCorpse]
+   * @param {number} [customRadius]
    */
-  spawnAt(x, y, value = 3, color = null, isCorpse = true) {
+  spawnAt(x, y, value = 3, color = null, isCorpse = true, customRadius = null) {
     // Add some scatter
     const scatter = 30;
     const fx = x + (Math.random() - 0.5) * scatter;
@@ -86,7 +87,7 @@ class FoodManager {
       Math.max(0, Math.min(WORLD_HEIGHT, fy)),
       value,
       color,
-      FOOD_RADIUS_MIN + Math.random() * (FOOD_RADIUS_MAX - FOOD_RADIUS_MIN),
+      customRadius || (FOOD_RADIUS_MIN + Math.random() * (FOOD_RADIUS_MAX - FOOD_RADIUS_MIN)),
       isCorpse
     );
     this.items.set(food.id, food);

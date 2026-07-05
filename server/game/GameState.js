@@ -177,10 +177,12 @@ class GameState {
     const numFoods = Math.max(1, Math.floor(snake.segments.length / dropEvery));
     const totalMassToDrop = snake.score * 0.5;
     const valuePerFood = Math.max(10, Math.floor(totalMassToDrop / numFoods));
+    // คำนวณรัศมีของซากอาหารอิงตามความอ้วน (radius) ของงูตัวที่ตาย
+    const foodRadius = Math.max(4, snake.radius * 0.75);
 
     for (let i = 0; i < snake.segments.length; i += dropEvery) {
       const seg = snake.segments[i];
-      this.food.spawnAt(seg.x, seg.y, valuePerFood, snake.color);
+      this.food.spawnAt(seg.x, seg.y, valuePerFood, snake.color, true, foodRadius);
     }
 
     // Notify player of death
@@ -196,9 +198,11 @@ class GameState {
     // Drop some food when player disconnects
     const numFoods = Math.max(1, Math.floor(snake.segments.length / 5));
     const valuePerFood = Math.max(10, Math.floor((snake.score * 0.5) / numFoods));
+    const foodRadius = Math.max(4, snake.radius * 0.75);
+    
     for (let i = 0; i < snake.segments.length; i += 5) {
       const seg = snake.segments[i];
-      this.food.spawnAt(seg.x, seg.y, valuePerFood, snake.color);
+      this.food.spawnAt(seg.x, seg.y, valuePerFood, snake.color, true, foodRadius);
     }
   }
 
