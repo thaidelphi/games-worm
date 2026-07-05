@@ -1,7 +1,10 @@
 // ==================== Game State Manager ====================
-// ไฟล์นี้เป็นหัวใจหลักของเกมเซิร์ฟเวอร์ (Game Loop) ที่รันที่ 20 TPS (Ticks Per Second)
+// TH: ไฟล์นี้เป็นหัวใจหลักของเกมเซิร์ฟเวอร์ (Game Loop) ที่รันที่ 20 TPS (Ticks Per Second)
 // ทำหน้าที่อัปเดตตำแหน่งผู้เล่น, ควบคุมการทำงานของบอท, ตรวจสอบการชน (Collision Detection)
 // และบรอดแคสต์ (Broadcast) ข้อมูลสถานะเกมล่าสุดส่งไปยังผู้เล่นทุกคน
+// EN: This file is the core of the game server (Game Loop) running at 20 TPS.
+// It updates player positions, controls bots, performs collision detection,
+// and broadcasts the latest game state to all players.
 'use strict';
 
 const { Snake, WORLD_WIDTH, WORLD_HEIGHT, SEGMENT_DISTANCE } = require('./Snake');

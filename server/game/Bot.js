@@ -1,7 +1,9 @@
 // ==================== AI Bot Behavior ====================
-// ไฟล์นี้ควบคุมพฤติกรรมของ AI (Bot) ในเกม 
+// TH: ไฟล์นี้ควบคุมพฤติกรรมของ AI (Bot) ในเกม 
 // บอทสามารถหลบกำแพง (Wall avoidance), หนีงูตัวอื่นที่ใหญ่กว่า (Enemy avoidance), 
 // ไล่กินอาหารที่อยู่ใกล้ (Chase food), หรือเลื้อยแบบสุ่ม (Wander) ได้
+// EN: This file controls the behavior of AI bots in the game.
+// Bots can avoid walls, flee from larger snakes, chase nearby food, or wander randomly.
 'use strict';
 
 const { Snake, WORLD_WIDTH, WORLD_HEIGHT } = require('./Snake');

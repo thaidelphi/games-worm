@@ -1,6 +1,8 @@
 // ==================== Food System ====================
-// ไฟล์นี้จัดการเรื่องการเกิดของอาหาร (Food Spawn) และการจัดการอาหารทั้งหมดในแผนที่
+// TH: ไฟล์นี้จัดการเรื่องการเกิดของอาหาร (Food Spawn) และการจัดการอาหารทั้งหมดในแผนที่
 // มีระบบสุ่มเกิดอาหารตามจุดต่างๆ และระบบดรอปอาหารเมื่อมีงูตาย (มวลสาร 50% กลายเป็นอาหาร)
+// EN: This file handles food spawning and managing all food items on the map.
+// It features random food generation at various points and dropping food when a snake dies (50% of mass becomes food).
 'use strict';
 
 const { v4: uuidv4 } = require('uuid');

@@ -1,7 +1,10 @@
 // ==================== Snake Entity ====================
-// ไฟล์นี้จัดการเกี่ยวกับตัวละคร "งู" (Snake) ในเกม 
+// TH: ไฟล์นี้จัดการเกี่ยวกับตัวละคร "งู" (Snake) ในเกม 
 // รวมถึงการคำนวณตำแหน่งข้อต่อ (Segments), การเคลื่อนที่แบบ Inverse Kinematics, 
 // การเลี้ยว (Steer), การโตขึ้นเมื่อกินอาหาร (Grow), และการหักคะแนนเมื่อเร่งความเร็ว (Boost)
+// EN: This file manages the "Snake" entity in the game.
+// It includes segment position calculations, Inverse Kinematics movement,
+// steering, growing when eating food, and score deduction when boosting.
 'use strict';
 
 const { v4: uuidv4 } = require('uuid');

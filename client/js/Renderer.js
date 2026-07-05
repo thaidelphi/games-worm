@@ -1,7 +1,10 @@
 // ==================== Canvas Renderer ====================
-// ไฟล์นี้รับผิดชอบการวาดกราฟิกทั้งหมดลงบน HTML5 Canvas
+// TH: ไฟล์นี้รับผิดชอบการวาดกราฟิกทั้งหมดลงบน HTML5 Canvas
 // รวมถึงการวาดงู (ด้วยเทคนิค lineCap='round' เพื่อความลื่นไหล), อาหารเรืองแสง, 
 // เอฟเฟกต์อนุภาค (Particles), ตารางพื้นหลัง (Grid) และแผนที่ย่อ (Minimap)
+// EN: This file is responsible for drawing all graphics onto the HTML5 Canvas.
+// This includes drawing snakes (using lineCap='round' for smoothness), glowing food,
+// particle effects, background grid, and the minimap.
 
 const WORLD_WIDTH  = 5000;
 const WORLD_HEIGHT = 5000;

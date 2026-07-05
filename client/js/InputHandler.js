@@ -1,7 +1,10 @@
 // ==================== Input Handler ====================
-// ไฟล์นี้คอยดักจับและจัดการ Input จากผู้เล่น ทั้งเมาส์ (Mouse), ทัชสกรีน (Touch),
+// TH: ไฟล์นี้คอยดักจับและจัดการ Input จากผู้เล่น ทั้งเมาส์ (Mouse), ทัชสกรีน (Touch),
 // คีย์บอร์ด (Keyboard), และการเลื่อนลูกกลิ้งเมาส์ (Scroll) 
 // เพื่อคำนวณมุมการหันหน้าของงู และส่งสถานะการกดปุ่มเร่งความเร็ว (Boost)
+// EN: This file captures and handles player input from mouse, touch,
+// keyboard, and mouse scroll to calculate the snake's heading angle
+// and transmit the boost button status.
 
 export class InputHandler {
   constructor() {

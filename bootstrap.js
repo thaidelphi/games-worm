@@ -1,7 +1,10 @@
 // ==================== Auto Bootstrap Script ====================
-// ไฟล์นี้เป็นสคริปต์ตัวช่วย (Helper) ที่จะเช็คและติดตั้งไลบรารีที่จำเป็นผ่าน npm อัตโนมัติ
+// TH: ไฟล์นี้เป็นสคริปต์ตัวช่วย (Helper) ที่จะเช็คและติดตั้งไลบรารีที่จำเป็นผ่าน npm อัตโนมัติ
 // โดยไม่ต้องให้ผู้เล่นหรือแอดมินพิมพ์คำสั่ง npm install เอง
 // พอติดตั้งเสร็จ มันจะสั่งรันตัวเซิร์ฟเวอร์หลัก (server/server.js) ขึ้นมาทันที
+// EN: This is a helper script that automatically checks and installs required libraries via npm
+// without requiring the player or admin to manually type npm install.
+// Once installed, it immediately starts the main server (server/server.js).
 'use strict';
 
 // Bootstrap: Download npm if missing and install dependencies
