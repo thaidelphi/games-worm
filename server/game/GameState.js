@@ -15,7 +15,7 @@ const SysConfig = require('../sys_config');
 const { 
   WORLD_WIDTH, WORLD_HEIGHT, TICK_RATE, FOOD_RADIUS_MIN,
   ITEM_DURATION_X2, ITEM_DURATION_X5, ITEM_DURATION_X10,
-  ITEM_DURATION_ZOOM, BORDER_DAMAGE_PER_TICK, INITIAL_LENGTH
+  ITEM_DURATION_ZOOM, BORDER_DAMAGE_PERCENT_PER_SEC, INITIAL_LENGTH
 } = SysConfig;
 const TICK_MS = 1000 / TICK_RATE;
 
@@ -106,7 +106,11 @@ class GameState {
         snake.updateBuffs(now);
         
         if (snake.isHittingBorder) {
-          snake.score -= BORDER_DAMAGE_PER_TICK;
+          // ลดคะแนนเป็นเปอร์เซ็นต์ต่อวินาที (ขั้นต่ำ 1 คะแนนต่อเฟรม)
+          const percentPerTick = BORDER_DAMAGE_PERCENT_PER_SEC / TICK_RATE;
+          const damage = Math.max(1, snake.score * (percentPerTick / 100));
+          snake.score -= damage;
+          
           const targetLength = INITIAL_LENGTH + Math.floor(snake.score / 20);
           while (snake.segments.length > Math.max(targetLength, INITIAL_LENGTH)) {
             snake.segments.pop();

@@ -34,8 +34,8 @@ const SysConfig = {
   BASE_RADIUS: 12,
   // MAX_RADIUS: ความอ้วนสูงสุดที่งูสามารถเติบโตได้
   MAX_RADIUS: 35,
-  // BORDER_DAMAGE_PER_TICK: จำนวนคะแนนที่ลดลงต่อ 1 Frame เมื่อเอาหัวชนขอบแผนที่
-  BORDER_DAMAGE_PER_TICK: 30,
+  // BORDER_DAMAGE_PERCENT_PER_SEC: เปอร์เซ็นต์ของคะแนนที่ลดลงต่อวินาทีเมื่อเอาหัวชนขอบแผนที่
+  BORDER_DAMAGE_PERCENT_PER_SEC: 20,
 
   // ==================== FOOD SETTINGS ====================
   // จำนวนอาหารบนแผนที่ที่ระบบจะพยายามรักษาไว้
@@ -53,7 +53,7 @@ const SysConfig = {
   BOT_NAMES: [
     'ShadowSerpent', 'NeonViper', 'CyberCoil', 'GlitchWorm',
     'PixelPython', 'VoidCrawler', 'StarSlither', 'NightAdder',
-    'PlasmaWorm',  'PhantomBoa',
+    'PlasmaWorm', 'PhantomBoa',
   ],
 
   // ==================== SPECIAL ITEMS ====================
@@ -61,7 +61,7 @@ const SysConfig = {
   ENABLE_SPECIAL_ITEMS: true,
   // โอกาสดรอปไอเทมพิเศษ (เช่น 0.05 = 5% เวลาสุ่มเกิดอาหาร)
   SPECIAL_ITEM_DROP_CHANCE: 0.05,
-  
+
   // ระยะเวลาของไอเทมคูณคะแนนแต่ละชนิด (วินาที)
   ITEM_DURATION_X2: 30,
   ITEM_DURATION_X5: 15,
