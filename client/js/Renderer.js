@@ -194,6 +194,12 @@ export class Renderer {
 
     // วาดตัวอักษรระบุประเภทไอเทมพิเศษ
     if (food.t && food.t !== 'normal') {
+      let labelText = food.t.toUpperCase();
+      if (food.t === 'mass') {
+        // ใช้ค่า config หรือแสดงว่ามันคือก้อนพลังมหาศาล
+        labelText = 'MASS';
+      }
+
       ctx.save();
       ctx.font = `bold ${Math.max(10, r * 0.8)}px Outfit, sans-serif`;
       ctx.textAlign = 'center';
@@ -203,7 +209,7 @@ export class Renderer {
       ctx.shadowBlur = 4;
       ctx.shadowOffsetX = 1;
       ctx.shadowOffsetY = 1;
-      ctx.fillText(food.t.toUpperCase(), food.x, food.y);
+      ctx.fillText(labelText, food.x, food.y);
       ctx.restore();
     }
   }

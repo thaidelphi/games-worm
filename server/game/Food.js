@@ -12,7 +12,8 @@ const {
   WORLD_WIDTH, WORLD_HEIGHT,
   FOOD_COUNT_TARGET, FOOD_RADIUS_MIN, FOOD_RADIUS_MAX,
   CORPSE_FOOD_LIFESPAN_SEC,
-  ENABLE_SPECIAL_ITEMS, SPECIAL_ITEM_DROP_CHANCE
+  ENABLE_SPECIAL_ITEMS, SPECIAL_ITEM_DROP_CHANCE,
+  SPECIAL_ITEM_MASS_VALUE
 } = SysConfig;
 
 class Food {
@@ -96,17 +97,26 @@ class FoodManager {
     if (finalType === 'normal' && ENABLE_SPECIAL_ITEMS && Math.random() < SPECIAL_ITEM_DROP_CHANCE) {
       const rand = Math.random();
       if (rand < 0.1) finalType = 'x10';       // 10%
-      else if (rand < 0.3) finalType = 'x5';   // 20%
-      else if (rand < 0.6) finalType = 'x2';   // 30%
-      else finalType = 'zoom';                 // 40%
+      else if (rand < 0.25) finalType = 'x5';  // 15%
+      else if (rand < 0.45) finalType = 'x2';  // 20%
+      else if (rand < 0.65) finalType = 'zoom';// 20%
+      else finalType = 'mass';                 // 35%
+    }
+    
+    let finalValue = value;
+    let finalRadius = customRadius || (FOOD_RADIUS_MIN + Math.random() * (FOOD_RADIUS_MAX - FOOD_RADIUS_MIN));
+
+    if (finalType === 'mass') {
+      finalValue = SPECIAL_ITEM_MASS_VALUE;
+      finalRadius = FOOD_RADIUS_MAX * 2.5; // ก้อนใหญ่กว่าปกติมาก
     }
 
     const food = new Food(
       Math.max(0, Math.min(WORLD_WIDTH, fx)),
       Math.max(0, Math.min(WORLD_HEIGHT, fy)),
-      value,
+      finalValue,
       color,
-      customRadius || (FOOD_RADIUS_MIN + Math.random() * (FOOD_RADIUS_MAX - FOOD_RADIUS_MIN)),
+      finalRadius,
       isCorpse,
       finalType
     );
