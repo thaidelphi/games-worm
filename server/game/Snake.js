@@ -22,8 +22,9 @@ class Snake {
    * @param {string} name
    * @param {boolean} isBot
    * @param {string} [id]
+   * @param {object} [spawnPos]
    */
-  constructor(name, isBot = false, id = null) {
+  constructor(name, isBot = false, id = null, spawnPos = null) {
     // id: รหัสอ้างอิงเฉพาะ (UUID) ของงูตัวนี้ ใช้แยกแยะระหว่างผู้เล่นแต่ละคน
     this.id = id || uuidv4();
     // name: ชื่อผู้เล่นหรือบอทที่จะไปแสดงใน Leaderboard และบนหัวงู
@@ -58,15 +59,21 @@ class Snake {
     // Spawn at a random position with some margin
     const margin = 300;
     let x = 0, y = 0;
-    if (WORLD_SHAPE === 'circle') {
-      const spawnAngle = Math.random() * Math.PI * 2;
-      const maxSpawnRadius = Math.max(0, (WORLD_WIDTH / 2) - margin);
-      const spawnR = Math.sqrt(Math.random()) * maxSpawnRadius;
-      x = (WORLD_WIDTH / 2) + Math.cos(spawnAngle) * spawnR;
-      y = (WORLD_HEIGHT / 2) + Math.sin(spawnAngle) * spawnR;
+    
+    if (spawnPos) {
+      x = spawnPos.x;
+      y = spawnPos.y;
     } else {
-      x = margin + Math.random() * (WORLD_WIDTH - margin * 2);
-      y = margin + Math.random() * (WORLD_HEIGHT - margin * 2);
+      if (WORLD_SHAPE === 'circle') {
+        const spawnAngle = Math.random() * Math.PI * 2;
+        const maxSpawnRadius = Math.max(0, (WORLD_WIDTH / 2) - margin);
+        const spawnR = Math.sqrt(Math.random()) * maxSpawnRadius;
+        x = (WORLD_WIDTH / 2) + Math.cos(spawnAngle) * spawnR;
+        y = (WORLD_HEIGHT / 2) + Math.sin(spawnAngle) * spawnR;
+      } else {
+        x = margin + Math.random() * (WORLD_WIDTH - margin * 2);
+        y = margin + Math.random() * (WORLD_HEIGHT - margin * 2);
+      }
     }
 
     // segments: Array เก็บออบเจ็กต์ {x, y} ของข้อต่อแต่ละอัน (Index 0 คือหัว, ตำแหน่งสุดท้ายคือหาง)
@@ -286,7 +293,50 @@ class Snake {
   _randomColor() {
     const hues = [0, 30, 60, 120, 180, 210, 270, 300, 330];
     const h = hues[Math.floor(Math.random() * hues.length)];
-    return `hsl(${h}, 100%, 60%)`;
+    return `hsl(${h}, 100%, 50%)`;
+  }
+
+  static getSafeSpawnPosition(allSnakes) {
+    const margin = 300;
+    const maxAttempts = 50;
+    // ปลอดภัยถ้าอยู่ห่างจากหัวงูตัวอื่นอย่างน้อย 800 pixel
+    const safeDistanceSq = 800 * 800; 
+
+    for (let i = 0; i < maxAttempts; i++) {
+      let x = 0, y = 0;
+      if (WORLD_SHAPE === 'circle') {
+        const spawnAngle = Math.random() * Math.PI * 2;
+        const maxSpawnRadius = Math.max(0, (WORLD_WIDTH / 2) - margin);
+        const spawnR = Math.sqrt(Math.random()) * maxSpawnRadius;
+        x = (WORLD_WIDTH / 2) + Math.cos(spawnAngle) * spawnR;
+        y = (WORLD_HEIGHT / 2) + Math.sin(spawnAngle) * spawnR;
+      } else {
+        x = margin + Math.random() * (WORLD_WIDTH - margin * 2);
+        y = margin + Math.random() * (WORLD_HEIGHT - margin * 2);
+      }
+
+      let isSafe = true;
+      if (allSnakes) {
+        for (const snake of allSnakes.values()) {
+          if (!snake.alive || snake.segments.length === 0) continue;
+          const head = snake.segments[0];
+          const dx = x - head.x;
+          const dy = y - head.y;
+          const distSq = dx * dx + dy * dy;
+          if (distSq < safeDistanceSq) {
+            isSafe = false;
+            break;
+          }
+        }
+      }
+
+      if (isSafe) {
+        return { x, y };
+      }
+    }
+
+    // Fallback if no 100% safe spot found
+    return null;
   }
 }
 

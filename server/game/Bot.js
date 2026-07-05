@@ -15,8 +15,8 @@ const {
 } = SysConfig;
 
 class Bot extends Snake {
-  constructor(name) {
-    super(name || BOT_NAMES[Math.floor(Math.random() * BOT_NAMES.length)], true);
+  constructor(name, spawnPos = null) {
+    super(name || BOT_NAMES[Math.floor(Math.random() * BOT_NAMES.length)], true, null, spawnPos);
     // _state: เก็บสถานะปัจจุบันของบอท ('wander' = เดินสุ่ม, 'chase' = ล่าอาหาร, 'flee' = หนี)
     this._state = 'wander';   // 'wander' | 'chase' | 'flee'
     // _targetAngle: มุมองศาเป้าหมายที่บอทต้องการหันไปหา (บอทจะไม่หันทีเดียว แต่ค่อยๆ เลี้ยวไปหามุมนี้)
@@ -129,9 +129,10 @@ class BotManager {
     }
   }
 
-  _spawnBot() {
+  _spawnBot(allSnakes = null) {
     const name = BOT_NAMES[Math.floor(Math.random() * BOT_NAMES.length)];
-    const bot = new Bot(name);
+    const spawnPos = allSnakes ? Snake.getSafeSpawnPosition(allSnakes) : null;
+    const bot = new Bot(name, spawnPos);
     this.bots.set(bot.id, bot);
     return bot;
   }
@@ -154,9 +155,9 @@ class BotManager {
         this.bots.delete(id);
       }
     }
-    // Maintain bot count
+    // If bots died, respawn them
     while (this.bots.size < BOT_COUNT_TARGET) {
-      this._spawnBot();
+      this._spawnBot(allSnakes);
     }
   }
 }

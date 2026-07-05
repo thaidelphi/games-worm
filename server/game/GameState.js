@@ -54,7 +54,9 @@ class GameState {
   // ---- Player Management ----
 
   addPlayer(socketId, name) {
-    const snake = new Snake(name, false, socketId);
+    const allSnakes = new Map([...this.players, ...this.bots.bots]);
+    const spawnPos = Snake.getSafeSpawnPosition(allSnakes);
+    const snake = new Snake(name, false, socketId, spawnPos);
     this.players.set(socketId, snake);
     console.log(`[+] Player "${name}" joined (${socketId})`);
     return snake;
@@ -69,18 +71,30 @@ class GameState {
     }
   }
 
-  setPlayerInput(socketId, angle, boosting) {
+  setPlayerInput(socketId, angle, boosting, action = null) {
     const snake = this.players.get(socketId);
     if (snake && snake.alive) {
       snake.steer(angle);
       snake.boosting = !!boosting;
+    }
+    
+    if (action && action.type === 'respawn') {
+      const old = this.players.get(socketId);
+      if (old && !old.alive) {
+        const allSnakes = new Map([...this.players, ...this.bots.bots]);
+        const spawnPos = Snake.getSafeSpawnPosition(allSnakes);
+        const newSnake = new Snake(old.name, false, socketId, spawnPos);
+        this.players.set(socketId, newSnake);
+      }
     }
   }
 
   respawnPlayer(socketId) {
     const old = this.players.get(socketId);
     if (!old) return null;
-    const snake = new Snake(old.name, false, socketId);
+    const allSnakes = new Map([...this.players, ...this.bots.bots]);
+    const spawnPos = Snake.getSafeSpawnPosition(allSnakes);
+    const snake = new Snake(old.name, false, socketId, spawnPos);
     this.players.set(socketId, snake);
     return snake;
   }
