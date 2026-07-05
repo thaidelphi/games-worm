@@ -192,8 +192,8 @@ export class Renderer {
     const pulse = 0.75 + 0.25 * Math.sin(now * 3 + phase);
     const r = food.r * pulse;
 
-    if (food.t && food.t !== 'normal') {
-      // สำหรับไอเทมพิเศษ วาดเป็นกล่องลอยๆ หมุนได้ เพื่อให้เด่นชัด
+    if (food.t && food.t !== 'normal' && food.t !== 'mass') {
+      // สำหรับไอเทมพิเศษ (ยกเว้น mass) วาดเป็นกล่องลอยๆ หมุนได้ เพื่อให้เด่นชัด
       ctx.save();
       // ลอยขึ้นลงนิดหน่อย
       const floatY = Math.sin(now * 4 + phase) * 4;
