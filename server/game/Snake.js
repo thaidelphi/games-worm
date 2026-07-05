@@ -101,9 +101,10 @@ class Snake {
 
     // 4. Drain score on boost
     if (this.boosting && this.score > 0 && this.segments.length > INITIAL_LENGTH) {
-      this.score = Math.max(0, this.score - 0.2);
-      // Shrink body occasionally
-      if (Math.random() < 0.15) {
+      this.score = Math.max(0, this.score - 4); // Lose 4 score per tick (80/sec)
+      
+      const targetLength = INITIAL_LENGTH + Math.floor(this.score / 20);
+      while (this.segments.length > Math.max(targetLength, INITIAL_LENGTH)) {
         this.segments.pop();
       }
     }
@@ -124,12 +125,13 @@ class Snake {
   }
 
   /**
-   * Grow the snake by n segments
+   * Grow the snake by n mass (score)
    * @param {number} n
    */
   grow(n = 1) {
-    this._growPending = (this._growPending || 0) + n;
-    this.score += n * 10;
+    this.score += n;
+    const targetLength = INITIAL_LENGTH + Math.floor(this.score / 20);
+    this._growPending = Math.max(0, targetLength - this.segments.length);
   }
 
   /**

@@ -151,12 +151,15 @@ class GameState {
 
     console.log(`[x] Snake "${snake.name}" died (score: ${snake.score})`);
 
-    // Drop food from every N-th segment
+    // Drop food conserving 50% of mass
     const dropEvery = 3;
+    const numFoods = Math.max(1, Math.floor(snake.segments.length / dropEvery));
+    const totalMassToDrop = snake.score * 0.5;
+    const valuePerFood = Math.max(10, Math.floor(totalMassToDrop / numFoods));
+
     for (let i = 0; i < snake.segments.length; i += dropEvery) {
       const seg = snake.segments[i];
-      const value = Math.max(1, Math.floor(snake.score / (snake.segments.length / dropEvery)));
-      this.food.spawnAt(seg.x, seg.y, value, snake.color);
+      this.food.spawnAt(seg.x, seg.y, valuePerFood, snake.color);
     }
 
     // Notify player of death
@@ -170,9 +173,11 @@ class GameState {
 
   _dropFood(snake) {
     // Drop some food when player disconnects
+    const numFoods = Math.max(1, Math.floor(snake.segments.length / 5));
+    const valuePerFood = Math.max(10, Math.floor((snake.score * 0.5) / numFoods));
     for (let i = 0; i < snake.segments.length; i += 5) {
       const seg = snake.segments[i];
-      this.food.spawnAt(seg.x, seg.y, 2, snake.color);
+      this.food.spawnAt(seg.x, seg.y, valuePerFood, snake.color);
     }
   }
 

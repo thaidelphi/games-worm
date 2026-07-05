@@ -13,7 +13,7 @@ class Food {
     this.id = uuidv4();
     this.x = x !== undefined ? x : Math.random() * WORLD_WIDTH;
     this.y = y !== undefined ? y : Math.random() * WORLD_HEIGHT;
-    this.value = value || Math.floor(1 + Math.random() * 3);
+    this.value = value || Math.floor(10 + Math.random() * 20);
     this.radius = radius || FOOD_RADIUS_MIN + Math.random() * (FOOD_RADIUS_MAX - FOOD_RADIUS_MIN);
     this.color = color || this._randomColor();
     this.pulse = Math.random() * Math.PI * 2; // phase offset for animation
