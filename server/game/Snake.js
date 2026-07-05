@@ -57,7 +57,7 @@ class Snake {
     this.speedEndTime = 0;
 
     // speedInventory: จำนวนไอเทมสปีดที่เก็บได้สะสมไว้สำหรับกดใช้เอง
-    this.speedInventory = 0;
+    this.speedInventory = 1;
 
     // Spawn at a random position with some margin
     const margin = 300;

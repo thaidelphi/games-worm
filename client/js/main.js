@@ -406,7 +406,7 @@ window.addEventListener('keydown', (e) => {
   // อย่าทำงานถ้าผู้เล่นกำลังพิมพ์ชื่ออยู่ในกล่องข้อความ
   if (document.activeElement === nameInput) return;
 
-  if (e.code === 'Space') {
+  if (e.code === 'Space' || e.key === ' ' || e.keyCode === 32) {
     e.preventDefault(); // ป้องกันไม่ให้กด Space แล้วหน้าจอเลื่อนลง
     if (socket?.connected) {
       socket.emit('useSpeedItem');
