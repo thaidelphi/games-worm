@@ -96,9 +96,16 @@ export class Renderer {
     const viewH = H / this.zoom;
     this._drawGrid(ctx, this.camX - viewW / 2, this.camY - viewH / 2, viewW, viewH);
 
-    // Food
+    // Food with Viewport Culling
     const now = performance.now() / 1000;
+    const margin = 100;
+    const minX = this.camX - viewW / 2 - margin;
+    const maxX = this.camX + viewW / 2 + margin;
+    const minY = this.camY - viewH / 2 - margin;
+    const maxY = this.camY + viewH / 2 + margin;
+
     for (const food of foodList) {
+      if (food.x < minX || food.x > maxX || food.y < minY || food.y > maxY) continue;
       this._drawFood(ctx, food, now);
     }
 
@@ -374,6 +381,12 @@ export class Renderer {
   }
 
   spawnParticles(x, y, color, count = 10) {
+    // จำกัดจำนวน Particle ในระบบเพื่อไม่ให้กระตุกเมื่อกินอาหารเยอะๆ พร้อมกัน
+    if (this.particles.length > 150) {
+      // ถ้ามีเยอะแล้ว ให้ลบของเก่าทิ้งบางส่วน
+      this.particles.splice(0, this.particles.length - 150);
+    }
+
     for (let i = 0; i < count; i++) {
       const angle = Math.random() * Math.PI * 2;
       const speed = 1 + Math.random() * 4;
@@ -399,8 +412,8 @@ export class Renderer {
 
       ctx.save();
       ctx.globalAlpha = Math.max(0, p.life);
-      ctx.shadowColor = p.color;
-      ctx.shadowBlur  = 6;
+      // ปิด shadowBlur สำหรับ particles เพื่อลดภาระการ์ดจอและซีพียู
+      ctx.shadowBlur = 0; 
       ctx.beginPath();
       ctx.arc(p.x, p.y, Math.max(0, p.r * p.life), 0, Math.PI * 2);
       ctx.fillStyle = p.color;
