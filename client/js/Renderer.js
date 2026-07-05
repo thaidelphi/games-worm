@@ -6,6 +6,7 @@
 // This includes drawing snakes (using lineCap='round' for smoothness), glowing food,
 // particle effects, background grid, and the minimap.
 
+// ตัวแปร WORLD_WIDTH, WORLD_HEIGHT: ขนาดของโลก (ต้องตรงกับฝั่งเซิร์ฟเวอร์)
 const WORLD_WIDTH  = 5000;
 const WORLD_HEIGHT = 5000;
 const GRID_SIZE    = 80;
@@ -16,17 +17,23 @@ export class Renderer {
    * @param {HTMLCanvasElement} minimap
    */
   constructor(canvas, minimap) {
+    // canvas: HTML5 Canvas Element สำหรับวาดภาพหลัก
     this.canvas  = canvas;
+    // ctx: 2D Context ของ Canvas หลัก
     this.ctx     = canvas.getContext('2d');
-    this.mm      = minimap;
+    
+    // mm: HTML5 Canvas สำหรับแสดงแผนที่ย่อ
+    this.mm = minimap;
+    // mmCtx: 2D Context ของ Canvas แผนที่ย่อ
     this.mmCtx   = minimap.getContext('2d');
 
     this.myId    = null;
+    // _zoom: ระดับการซูมของมุมกล้องปัจจุบัน
     this.zoom    = 1.0;
     this.camX    = WORLD_WIDTH  / 2;
     this.camY    = WORLD_HEIGHT / 2;
 
-    // Particle system
+    // particles: Array เก็บเอฟเฟกต์จุดสี (Particles) เมื่อมีคนตายหรือกินอาหาร
     this.particles = [];
 
     // Cursor tracking

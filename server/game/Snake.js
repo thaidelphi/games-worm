@@ -13,14 +13,16 @@ const WORLD_WIDTH = 5000;
 const WORLD_HEIGHT = 5000;
 const SEGMENT_DISTANCE = 12;       // distance between segments (increased to look better)
 // ==========================================
-// ⚙️ ตั้งค่าความเร็ว (กำหนดเองได้ที่นี่)
-// ==========================================
-const BASE_SPEED = 6.0;            // ความเร็วปกติ (เดิม 3.5)
-const BOOST_SPEED = 12.0;          // ความเร็วตอนคลิกเร่ง (เดิม 7.0)
+// ตัวแปร BASE_SPEED: ความเร็วปกติของงูตอนเลื้อย (พิกเซลต่อ Tick)
+const BASE_SPEED = 6.0;
+
+// ตัวแปร BOOST_SPEED: ความเร็วตอนกดเร่ง (พิกเซลต่อ Tick)
+// มีผลคือถ้ายิ่งมาก งูจะพุ่งเร็วมาก แต่มุมเลี้ยวจะตอบสนองยากขึ้น
+const BOOST_SPEED = 12.0;
 // ==========================================
 const BASE_RADIUS = 12;
 const MAX_RADIUS = 35;
-const INITIAL_LENGTH = 15;         // number of segments on spawn
+const INITIAL_LENGTH = 15;
 
 class Snake {
   /**
@@ -29,20 +31,29 @@ class Snake {
    * @param {string} [id]
    */
   constructor(name, isBot = false, id = null) {
+    // id: รหัสอ้างอิงเฉพาะ (UUID) ของงูตัวนี้ ใช้แยกแยะระหว่างผู้เล่นแต่ละคน
     this.id = id || uuidv4();
+    // name: ชื่อผู้เล่นหรือบอทที่จะไปแสดงใน Leaderboard และบนหัวงู
     this.name = name;
+    // isBot: สถานะว่านี่คือบอทใช่หรือไม่
     this.isBot = isBot;
+    // alive: สถานะมีชีวิต หากเป็น false จะไม่ถูกนำไปประมวลผลต่อและจะถูกลบออกจากเกม
     this.alive = true;
+    // score: คะแนนปัจจุบัน (ใช้ตีความหมายถึงมวลสาร/Mass ของงู) ยิ่งมากงูจะยิ่งยาว
     this.score = 0;
+    // boosting: สถานะว่าผู้เล่นกำลังกดปุ่มเร่งความเร็วอยู่หรือไม่
     this.boosting = false;
+    // angle: มุมหันหน้าปัจจุบันของงู (ในหน่วยเรเดียน 0 - 2*PI)
+    this.angle = Math.random() * Math.PI * 2;
+    // _growPending: คิวการเติบโตสะสม ว่าต้องเพิ่มความยาวอีกกี่ข้อต่อ (รอการอัปเดตในรอบถัดไป)
+    this._growPending = 0;
 
     // Spawn at a random position with some margin
     const margin = 300;
     const x = margin + Math.random() * (WORLD_WIDTH - margin * 2);
     const y = margin + Math.random() * (WORLD_HEIGHT - margin * 2);
-    this.angle = Math.random() * Math.PI * 2;
 
-    // Build initial segments
+    // segments: Array เก็บออบเจ็กต์ {x, y} ของข้อต่อแต่ละอัน (Index 0 คือหัว, ตำแหน่งสุดท้ายคือหาง)
     this.segments = [];
     for (let i = 0; i < INITIAL_LENGTH; i++) {
       this.segments.push({

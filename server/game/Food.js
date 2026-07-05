@@ -8,18 +8,28 @@
 const { v4: uuidv4 } = require('uuid');
 const { WORLD_WIDTH, WORLD_HEIGHT } = require('./Snake');
 
+// ตัวแปร FOOD_COUNT_TARGET: จำนวนอาหารเป้าหมายที่จะมีในฉากเสมอ
+// ผลคือถ้าน้อยกว่าค่านี้ อาหารใหม่จะถูกสร้างขึ้นมาเติมจนเต็มแผนที่อัตโนมัติ
 const FOOD_COUNT_TARGET = 600;    // keep this many food items in world
+
+// ตัวแปร FOOD_RADIUS_MIN, FOOD_RADIUS_MAX: ขนาดรัศมีเล็กสุด-ใหญ่สุดของอาหาร (แบบสุ่ม)
 const FOOD_RADIUS_MIN = 4;
 const FOOD_RADIUS_MAX = 9;
 
 class Food {
   constructor(x, y, value, color, radius) {
+    // id: รหัสไอดีของอาหาร เพื่อให้ Server และ Client อ้างอิงชิ้นเดียวกันได้ถูกต้อง
     this.id = uuidv4();
+    // x, y: พิกัดตำแหน่งของอาหารบนแผนที่
     this.x = x !== undefined ? x : Math.random() * WORLD_WIDTH;
     this.y = y !== undefined ? y : Math.random() * WORLD_HEIGHT;
+    // value: มูลค่าคะแนน/มวลสารที่งูจะได้เมื่อกินชิ้นนี้เข้าไป
     this.value = value || Math.floor(10 + Math.random() * 20);
+    // radius: ขนาดของอาหารชิ้นนี้ที่แสดงผลบนหน้าจอ
     this.radius = radius || FOOD_RADIUS_MIN + Math.random() * (FOOD_RADIUS_MAX - FOOD_RADIUS_MIN);
+    // color: สีของอาหาร
     this.color = color || this._randomColor();
+    // pulse: ค่า offset (ระยะเยื้อง) สำหรับอนิเมชันให้วงกลมกระพริบในจังหวะที่ไม่พร้อมกัน
     this.pulse = Math.random() * Math.PI * 2; // phase offset for animation
   }
 

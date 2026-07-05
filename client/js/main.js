@@ -26,24 +26,40 @@ const zoomInBtn    = document.getElementById('zoom-in-btn');
 const zoomOutBtn   = document.getElementById('zoom-out-btn');
 const zoomLevel    = document.getElementById('zoom-level');
 
-// ---- State ----
+// ---- State (ตัวแปรสถานะของเกมฝั่ง Client) ----
+// socket: ใช้เก็บการเชื่อมต่อ WebSocket
 let socket   = null;
+// renderer: ตัวจัดการวาดกราฟิกลง Canvas (คลาส Renderer)
 let renderer = null;
+// input: ตัวจัดการรับค่าเมาส์ คีย์บอร์ด ทัชสกรีน (คลาส InputHandler)
 let input    = null;
+// myId: ไอดีของผู้เล่น (Socket ID ของตัวเอง)
 let myId     = null;
+// alive: สถานะว่าผู้เล่นยังมีชีวิตอยู่หรือไม่
 let alive    = false;
+// clientSnakes: Map เก็บข้อมูลงูทั้งหมดที่ได้รับจากเซิร์ฟเวอร์ (ใช้ทำ Interpolation เคลื่อนที่ลื่นไหล)
 let clientSnakes = new Map(); // Smooth interpolated snakes
+// food: Array เก็บข้อมูลอาหารทั้งหมดบนจอ
 let food     = [];
+// score: คะแนนปัจจุบันของผู้เล่น
 let score    = 0;
+// zoom: ระดับการซูมปัจจุบัน
 let zoom     = 1.0;
+// boostEnergy: หลอดพลังงานวิ่งเร็ว (0.0 ถึง 1.0)
 let boostEnergy = 1.0; // 0..1
+
+// BOOST_DRAIN: อัตราการลดพลังงานเมื่อกดวิ่งเร็ว
 const BOOST_DRAIN = 0.008;
+// BOOST_REGEN: อัตราการฟื้นฟูพลังงานเมื่อไม่ได้วิ่ง
 const BOOST_REGEN = 0.003;
+// rafId: ตัวเก็บ ID ของ requestAnimationFrame ไว้สำหรับยกเลิกลูป
 let rafId    = null;
 
-// ---- Zoom helpers ----
+// ---- Zoom helpers (ตัวแปรควบคุมระบบซูม) ----
+// MIN_ZOOM, MAX_ZOOM: ระยะซูมเข้า/ออก สูงสุดและต่ำสุด
 const MIN_ZOOM = 0.5;
 const MAX_ZOOM = 2.0;
+// ZOOM_STEP: อัตราการซูมต่อการคลิกหรือเลื่อนลูกกลิ้ง 1 ครั้ง
 const ZOOM_STEP = 0.1;
 
 function setZoom(z) {

@@ -8,20 +8,27 @@
 
 const { Snake, WORLD_WIDTH, WORLD_HEIGHT } = require('./Snake');
 
+// ตัวแปร BOT_NAMES: ใช้เก็บรายชื่อที่บอทจะสุ่มไปใช้แสดงผลตอนเกิด
 const BOT_NAMES = [
   'ShadowSerpent', 'NeonViper', 'CyberCoil', 'GlitchWorm',
   'PixelPython', 'VoidCrawler', 'StarSlither', 'NightAdder',
   'PlasmaWorm',  'PhantomBoa',
 ];
 
+// ตัวแปร BOT_COUNT_TARGET: จำนวนบอทเป้าหมายที่จะรักษาไว้ในเซิร์ฟเวอร์เสมอ
+// ผลคือถ้าน้อยกว่าค่านี้ ระบบจะสุ่มเกิดบอทใหม่มาเติมให้เต็ม
 const BOT_COUNT_TARGET = 8; // keep this many bots alive
 
 class Bot extends Snake {
   constructor(name) {
     super(name || BOT_NAMES[Math.floor(Math.random() * BOT_NAMES.length)], true);
+    // _state: เก็บสถานะปัจจุบันของบอท ('wander' = เดินสุ่ม, 'chase' = ล่าอาหาร, 'flee' = หนี)
     this._state = 'wander';   // 'wander' | 'chase' | 'flee'
+    // _targetAngle: มุมองศาเป้าหมายที่บอทต้องการหันไปหา (บอทจะไม่หันทีเดียว แต่ค่อยๆ เลี้ยวไปหามุมนี้)
     this._targetAngle = this.angle;
+    // _wanderTimer: ตัวนับเวลา (Tick) ว่าบอทเดินสุ่มมานานแค่ไหนแล้ว
     this._wanderTimer = 0;
+    // _wanderInterval: รอบเวลา (Tick) ที่บอทจะสุ่มเปลี่ยนทิศทางเดินใหม่ (กันบอทเดินชนขอบตลอดเวลา)
     this._wanderInterval = 80 + Math.floor(Math.random() * 120); // ticks
   }
 

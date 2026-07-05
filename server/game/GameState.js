@@ -16,11 +16,22 @@ const TICK_MS = 1000 / TICK_RATE;
 
 class GameState {
   constructor(io) {
+    // io: อินสแตนซ์ของ Socket.IO เอาไว้ใช้สำหรับ Boardcast สถานะไปให้ทุก Client
     this.io = io;
-    /** @type {Map<string, Snake>} */
+    
+    // snakes: แผนที่ (Map) เก็บงูทั้งหมดในเกม รวมถึงผู้เล่นจริงและบอท (Key = Socket ID หรือ UUID, Value = Snake object)
     this.players = new Map();
+    
+    // food: ตัวจัดการเรื่องจุดเกิด/ลบ อาหารในเกม (FoodManager)
     this.food = new FoodManager();
+    
+    // bots: ตัวจัดการควบคุมพฤติกรรมของบอททั้งหมด (BotManager)
     this.bots = new BotManager();
+    
+    // tickRate: จำนวนรอบการอัปเดตเซิร์ฟเวอร์ต่อวินาที (TPS)
+    this.tickRate = 20; 
+    
+    // tickInterval: ตัวจับเวลา (Timer) สำหรับรัน Game Loop ตามอัตรา tickRate
     this._tickInterval = null;
   }
 
