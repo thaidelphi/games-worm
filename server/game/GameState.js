@@ -12,7 +12,7 @@ const { FoodManager } = require('./Food');
 const { BotManager } = require('./Bot');
 const SysConfig = require('../sys_config');
 
-const { WORLD_WIDTH, WORLD_HEIGHT, TICK_RATE } = SysConfig;
+const { WORLD_WIDTH, WORLD_HEIGHT, TICK_RATE, FOOD_RADIUS_MIN } = SysConfig;
 const TICK_MS = 1000 / TICK_RATE;
 
 class GameState {
@@ -177,12 +177,14 @@ class GameState {
     const numFoods = Math.max(1, Math.floor(snake.segments.length / dropEvery));
     const totalMassToDrop = snake.score * 0.5;
     const valuePerFood = Math.max(10, Math.floor(totalMassToDrop / numFoods));
-    // คำนวณรัศมีของซากอาหารอิงตามความอ้วน (radius) ของงูตัวที่ตาย
-    const foodRadius = Math.max(4, snake.radius * 0.75);
+    // คำนวณรัศมีสูงสุดของซากอาหารอิงตามความอ้วน (radius) ของงูตัวที่ตาย
+    const maxFoodRadius = Math.max(FOOD_RADIUS_MIN, snake.radius * 0.75);
 
     for (let i = 0; i < snake.segments.length; i += dropEvery) {
       const seg = snake.segments[i];
-      this.food.spawnAt(seg.x, seg.y, valuePerFood, snake.color, true, foodRadius);
+      // สุ่มให้มีทั้งเม็ดเล็กเม็ดใหญ่ปนกัน
+      const randomFoodRadius = FOOD_RADIUS_MIN + Math.random() * (maxFoodRadius - FOOD_RADIUS_MIN);
+      this.food.spawnAt(seg.x, seg.y, valuePerFood, snake.color, true, randomFoodRadius);
     }
 
     // Notify player of death
@@ -198,11 +200,12 @@ class GameState {
     // Drop some food when player disconnects
     const numFoods = Math.max(1, Math.floor(snake.segments.length / 5));
     const valuePerFood = Math.max(10, Math.floor((snake.score * 0.5) / numFoods));
-    const foodRadius = Math.max(4, snake.radius * 0.75);
+    const maxFoodRadius = Math.max(FOOD_RADIUS_MIN, snake.radius * 0.75);
     
     for (let i = 0; i < snake.segments.length; i += 5) {
       const seg = snake.segments[i];
-      this.food.spawnAt(seg.x, seg.y, valuePerFood, snake.color, true, foodRadius);
+      const randomFoodRadius = FOOD_RADIUS_MIN + Math.random() * (maxFoodRadius - FOOD_RADIUS_MIN);
+      this.food.spawnAt(seg.x, seg.y, valuePerFood, snake.color, true, randomFoodRadius);
     }
   }
 
