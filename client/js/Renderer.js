@@ -39,6 +39,9 @@ export class Renderer {
     this._cx = 0;
     this._cy = 0;
 
+    // glowMultiplier: ตัวคูณความฟุ้ง (0.0 = ปิด, 1.0 = ปกติ) จากหน้าจอตั้งค่า
+    this.glowMultiplier = 1.0;
+
     this._resize();
     window.addEventListener('resize', () => this._resize());
     window.addEventListener('mousemove', e => { this._cx = e.clientX; this._cy = e.clientY; });
@@ -174,7 +177,7 @@ export class Renderer {
   _drawBorder(ctx) {
     ctx.save();
     ctx.shadowColor = '#7c3aed';
-    ctx.shadowBlur  = 24;
+    ctx.shadowBlur  = 24 * this.glowMultiplier;
     ctx.strokeStyle = 'rgba(124,58,237,0.8)';
     ctx.lineWidth   = 5;
     ctx.strokeRect(3, 3, WORLD_WIDTH - 6, WORLD_HEIGHT - 6);
@@ -201,7 +204,7 @@ export class Renderer {
       const boxSize = r * 1.6;
       
       ctx.shadowColor = food.c;
-      ctx.shadowBlur = 15 + 10 * pulse;
+      ctx.shadowBlur = (15 + 10 * pulse) * this.glowMultiplier;
       
       // วาดกล่องหลัก
       ctx.fillStyle = food.c;
@@ -234,7 +237,7 @@ export class Renderer {
       ctx.fillStyle = '#ffffff';
       // เงาข้อความแบบแข็งๆ ให้อ่านง่าย
       ctx.shadowColor = '#000000';
-      ctx.shadowBlur = 4;
+      ctx.shadowBlur = 4 * this.glowMultiplier;
       ctx.shadowOffsetX = 1.5;
       ctx.shadowOffsetY = 1.5;
       // ให้ข้อความลอยตามกล่องด้วย
@@ -244,7 +247,7 @@ export class Renderer {
       // อาหารปกติ วาดเป็นวงกลมเรืองแสง
       ctx.save();
       ctx.shadowColor = food.c;
-      ctx.shadowBlur  = 12;
+      ctx.shadowBlur  = 12 * this.glowMultiplier;
 
       const grad = ctx.createRadialGradient(food.x, food.y, 0, food.x, food.y, r + 2);
       grad.addColorStop(0, '#ffffff');
@@ -268,7 +271,7 @@ export class Renderer {
 
     ctx.save();
     ctx.shadowColor = color;
-    ctx.shadowBlur  = isMe ? 18 : (snake.boosting ? 22 : 8);
+    ctx.shadowBlur  = (isMe ? 18 : (snake.boosting ? 22 : 8)) * this.glowMultiplier;
 
     const totalSegs = segs.length;
     ctx.lineCap = 'round';
@@ -355,7 +358,7 @@ export class Renderer {
     ctx.textAlign    = 'center';
     ctx.textBaseline = 'bottom';
     ctx.shadowColor  = 'rgba(0,0,0,0.9)';
-    ctx.shadowBlur   = 5;
+    ctx.shadowBlur   = 5 * this.glowMultiplier;
     ctx.shadowOffsetX = 1;
     ctx.shadowOffsetY = 1;
     
@@ -427,7 +430,7 @@ export class Renderer {
     ctx.strokeStyle = 'rgba(255,255,255,0.7)';
     ctx.lineWidth   = 1.5;
     ctx.shadowColor = '#a855f7';
-    ctx.shadowBlur  = 8;
+    ctx.shadowBlur  = 8 * this.glowMultiplier;
     ctx.beginPath();
     ctx.arc(this._cx, this._cy, 8, 0, Math.PI * 2);
     ctx.stroke();
@@ -470,7 +473,7 @@ export class Renderer {
       ctx.arc(x, y, r, 0, Math.PI * 2);
       ctx.fillStyle   = snake.color || '#7c3aed';
       ctx.shadowColor = snake.id === myId ? snake.color : 'transparent';
-      ctx.shadowBlur  = snake.id === myId ? 6 : 0;
+      ctx.shadowBlur  = (snake.id === myId ? 6 : 0) * this.glowMultiplier;
       ctx.fill();
     }
 

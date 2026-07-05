@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Slither.io-style multiplayer snake game — grow your snake, dominate the arena!" />
-  <title>Slither Arena — Multiplayer Snake Game</title>
+  <meta name="description" content="TEWAN.WORM multiplayer snake game — grow your snake, dominate the arena!" />
+  <title>TEWAN.WORM — Multiplayer Snake Game</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
@@ -18,7 +18,7 @@
       <div class="logo-wrapper">
         <h1 class="logo">
           <span class="logo-icon">🐍</span>
-          <span class="logo-text">Slither<span class="accent">Arena</span></span>
+          <span class="logo-text">TEWAN.<span class="accent">WORM</span></span>
         </h1>
         <p class="tagline">Grow. Dominate. Survive.</p>
       </div>
@@ -33,6 +33,16 @@
           autocomplete="off"
           spellcheck="false"
         />
+      </div>
+
+      <div class="form-group glow-setting" style="text-align: left; margin-bottom: 24px;">
+        <label for="glow-range" style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem;">
+          Glow Level / ความฟุ้ง: <span id="glow-value">5</span> (0-5)
+        </label>
+        <input type="range" id="glow-range" min="0" max="5" value="5" style="width: 100%; cursor: pointer;">
+        <div style="font-size: 0.75rem; opacity: 0.7; margin-top: 6px; text-align: center;">
+          Lower value = Better performance
+        </div>
       </div>
 
       <button id="play-btn" class="btn btn-primary">
